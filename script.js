@@ -103,15 +103,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         return value.toLocaleString();
                     },
-                    anchor: (context) => context.dataset.type === 'line' ? 'center' : 'end',
-                    align: (context) => context.dataset.type === 'line' ? 'bottom' : 'top',
-                    offset: (context) => context.dataset.type === 'line' ? 0 : 4,
+                    anchor: (context) => {
+                        const dataset = context.dataset;
+                        const value = dataset.data[context.dataIndex];
+                        return value >= 0 ? 'end' : 'start';
+                    },
+                    align: (context) => {
+                        const dataset = context.dataset;
+                        const value = dataset.data[context.dataIndex];
+                        return value >= 0 ? 'top' : 'bottom';
+                    },
+                    offset: 4,
                     display: (context) => {
-                        // Mostrar etiquetas solo para barras en móviles
-                        if (window.innerWidth < 640) {
-                            return context.dataset.type !== 'line';
-                        }
-                        return true;
+                        const dataset = context.dataset;
+                        const value = dataset.data[context.dataIndex];
+                        const meta = context.chart.getDatasetMeta(context.datasetIndex);
+                        const total = meta.total;
+                        
+                        // Mostrar etiquetas solo si el valor es mayor que el 5% del máximo
+                        return Math.abs(value) > total * 0.05;
                     }
                 }
             },
@@ -188,6 +198,25 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return label;
                             }
                         }
+                    },
+                    datalabels: {
+                        ...barChartConfig.options.plugins.datalabels,
+                        formatter: (value, context) => {
+                            if (context.dataset.type === 'line') {
+                                return value.toFixed(1) + '%';
+                            }
+                            if (Math.abs(value) >= 1000) {
+                                return (value / 1000).toFixed(1) + 'k';
+                            }
+                            return value.toLocaleString();
+                        },
+                        color: (context) => {
+                            return context.dataset.type === 'line' ? 'yellow' : 'white';
+                        },
+                        textStrokeColor: 'black',
+                        textStrokeWidth: 1,
+                        textShadowBlur: 5,
+                        textShadowColor: 'black'
                     }
                 }
             }
@@ -253,6 +282,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: data,
                     backgroundColor: Object.values(colors)
                 }]
+            },
+            options: {
+                ...pieChartConfig.options,
+                plugins: {
+                    ...pieChartConfig.options.plugins,
+                    datalabels: {
+                        ...pieChartConfig.options.plugins.datalabels,
+                        formatter: (value, context) => {
+                            const label = context.chart.data.labels[context.dataIndex];
+                            return `${label}: ${value}%`;
+                        },
+                        color: 'white',
+                        textStrokeColor: 'black',
+                        textStrokeWidth: 1,
+                        textShadowBlur: 5,
+                        textShadowColor: 'black',
+                        font: {
+                            weight: 'bold',
+                            size: () => window.innerWidth < 640 ? 8 : 10
+                        },
+                        display: function(context) {
+                            return context.dataset.data[context.dataIndex] > 5;
+                        }
+                    }
+                }
             }
         });
     }
@@ -269,13 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
         Chart.instances.forEach(chart => {
             if (chart.config.type === 'pie') {
                 chart.options.plugins.legend.position = window.innerWidth < 640 ? 'bottom' : 'right';
-            } else {
-                chart.options.plugins.datalabels.display = (context) => {
-                    if (window.innerWidth < 640) {
-                        return context.dataset.type !== 'line';
-                    }
-                    return true;
-                };
             }
             chart.update();
         });
