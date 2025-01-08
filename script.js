@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 30,
-                    right: 25,
+                    top: 20,
+                    right: 20,
                     bottom: 10,
-                    left: 15
+                    left: 10
                 }
             },
             scales: {
@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         maxRotation: 45,
                         minRotation: 45,
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
-                        }
+                            size: window.innerWidth < 768 ? 8 : 12
+                        },
+                        autoSkip: true,
+                        maxTicksLimit: window.innerWidth < 768 ? 6 : 11
                     },
                     grid: {
                         display: false
@@ -50,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 768 ? 8 : 12
                         },
                         callback: function(value) {
                             return value.toLocaleString();
@@ -68,20 +70,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 12 : 14
+                            size: window.innerWidth < 768 ? 10 : 14
                         },
-                        padding: 20
+                        padding: window.innerWidth < 768 ? 10 : 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 9 : 11
+                        size: window.innerWidth < 768 ? 8 : 11
                     },
-                    padding: 6,
+                    padding: 4,
                     display: function(context) {
-                        return context.datasetIndex !== 2;
+                        return context.datasetIndex !== 2 && (window.innerWidth >= 768 || context.dataIndex % 2 === 0);
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -94,8 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     offset: 4
                 }
             },
-            barPercentage: 0.6,
-            categoryPercentage: 0.7
+            barPercentage: window.innerWidth < 768 ? 0.8 : 0.6,
+            categoryPercentage: window.innerWidth < 768 ? 0.9 : 0.7
         }
     };
 
@@ -241,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 768 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -307,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 768 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -373,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 768 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -470,9 +472,9 @@ document.addEventListener('DOMContentLoaded', function() {
         Chart.instances.forEach(chart => {
             if (chart.config.type === 'bar') {
                 const fontSize = isMobile ? {
-                    legend: 12,
-                    datalabels: 9,
-                    ticks: 10
+                    legend: 10,
+                    datalabels: 8,
+                    ticks: 8
                 } : {
                     legend: 14,
                     datalabels: 11,
@@ -485,19 +487,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 chart.options.scales.y.ticks.font.size = fontSize.ticks;
 
                 chart.options.layout.padding = isMobile ? {
+                    top: 10,
+                    right: 10,
+                    bottom: 5,
+                    left: 5
+                } : {
                     top: 20,
                     right: 20,
                     bottom: 10,
                     left: 10
-                } : {
-                    top: 30,
-                    right: 25,
-                    bottom: 10,
-                    left: 15
                 };
 
-                chart.options.barPercentage = isMobile ? 0.7 : 0.6;
-                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
+                chart.options.barPercentage = isMobile ? 0.8 : 0.6;
+                chart.options.categoryPercentage = isMobile ? 0.9 : 0.7;
+                chart.options.scales.x.ticks.maxTicksLimit = isMobile ? 6 : 11;
             }
             
             chart.update('none');
@@ -507,7 +510,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call resize after the page has fully loaded and on window resize
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', debounce(resizeCharts, 250));
-    window.addEventListener('orientationchange', () => setTimeout(resizeCharts, 250));
+    window.addEventListener('orientationchange', () => {
+        setTimeout(resizeCharts, 250);
+        setTimeout(resizeCharts, 500); // Llamada adicional para asegurar que se aplique después de la rotación
+    });
 });
 
 // Utility function for debouncing resize events
