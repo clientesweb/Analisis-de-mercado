@@ -254,153 +254,35 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
 
-    // Función para generar el PDF
-    async function generatePDFWithCharts() {
-        const button = document.getElementById('pdfButton');
-        const buttonText = document.getElementById('pdfButtonText');
+    // Función para imprimir el informe
+    function printReport() {
+        const button = document.getElementById('printButton');
+        const buttonText = button.querySelector('span');
         
-        try {
-            console.log('Iniciando generación de PDF...');
-            button.disabled = true;
-            buttonText.textContent = 'Generando PDF...';
+        button.disabled = true;
+        buttonText.textContent = 'Preparando para imprimir...';
+
+        // Ocultar el botón de impresión
+        button.style.display = 'none';
+
+        // Imprimir después de un breve retraso para asegurar que los estilos se apliquen
+        setTimeout(() => {
+            window.print();
             
-            // Verificar que jsPDF esté disponible
-            if (typeof window.jspdf === 'undefined') {
-                throw new Error('jsPDF no está cargado correctamente');
-            }
-
-            // Verificar que html2canvas esté disponible
-            if (typeof html2canvas === 'undefined') {
-                throw new Error('html2canvas no está cargado correctamente');
-            }
-
-            await ensureChartsRendered();
-            console.log('Gráficos renderizados correctamente');
-            
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const margin = 10;
-
-            // Función para añadir una página
-            const addPage = () => {
-                pdf.addPage();
-                return pdf.internal.getCurrentPageInfo().pageNumber;
-            };
-
-            // Función para añadir texto
-            const addText = (text, fontSize, isBold = false) => {
-                pdf.setFontSize(fontSize);
-                pdf.setFont(undefined, isBold ? 'bold' : 'normal');
-                const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin);
-                pdf.text(lines, margin, pdf.internal.getCurrentPageInfo().pageNumber === 1 ? 40 : 20);
-                return lines.length * fontSize / 72 * 2.54; // Altura aproximada del texto en cm
-            };
-
-            // Función para añadir un gráfico
-            const addChart = async (chartId, title) => {
-                console.log(`Añadiendo gráfico: ${chartId}`);
-                const chart = document.getElementById(chartId);
-                if (!chart) {
-                    throw new Error(`No se encontró el elemento con id ${chartId}`);
-                }
-                const chartImage = await html2canvas(chart);
-                const imgData = chartImage.toDataURL('image/png');
-                const imgWidth = pageWidth - 2 * margin;
-                const imgHeight = (chartImage.height * imgWidth) / chartImage.width;
-                
-                if (pdf.internal.getCurrentPageInfo().pageNumber > 1) {
-                    pdf.addPage();
-                }
-                
-                addText(title, 14, true);
-                pdf.addImage(imgData, 'PNG', margin, 30, imgWidth, imgHeight);
-                console.log(`Gráfico ${chartId} añadido correctamente`);
-            };
-
-            // Añadir logo
-            console.log('Añadiendo logo...');
-            const logo = document.querySelector('header img');
-            if (!logo) {
-                throw new Error('No se encontró el logo');
-            }
-            const logoImage = await html2canvas(logo);
-            const logoData = logoImage.toDataURL('image/png');
-            pdf.addImage(logoData, 'PNG', (pageWidth - 60) / 2, 10, 60, 60 * logoImage.height / logoImage.width);
-            console.log('Logo añadido correctamente');
-
-            // Añadir título y subtítulos
-            console.log('Añadiendo títulos...');
-            let yOffset = 80;
-            yOffset += addText('COMPORTAMIENTO OFERTA RESIDENCIAL ORGANIZADA', 16, true);
-            yOffset += addText('11 PRINCIPALES CIUDADES DEL ECUADOR', 14);
-            yOffset += addText('PERIODO COMPARATIVO 2023 - 2024', 14);
-
-            // Añadir objetivo
-            console.log('Añadiendo objetivo...');
-            yOffset += 10;
-            yOffset += addText('OBJETIVO DEL ARTÍCULO', 14, true);
-            const objectiveText = 'Medir el nivel comercial y constructivo de la oferta residencial (casas –departamentos) últimos dos años factor determinante que permite conocer la salud inmobiliaria de cada una de las ciudades analizadas esto resultado de los niveles de absorción promedio. Información actualizada puntualmente por ciudad y proyecto en el último semestre de cada año la cual en la actualidad es una herramienta básica e indispensable para el sector de la construcción, financiero y comercial del país.';
-            yOffset += addText(objectiveText, 12);
-
-            // Añadir gráficos
-            await addChart('residentialProjectsChart', 'Número Proyectos Residenciales (Casas –Depts) Periodo Comparativo 2023 –2024');
-            await addChart('availableUnitsChart', 'Unidades Disponibles (Casas –Depts) 11 Principales Ciudades');
-            await addChart('absorptionChart', 'Absorción Promedio Mes Proyectos Residenciales');
-            await addChart('projectsDistributionChart', 'Peso Porcentual Oferta por Ciudad');
-            await addChart('unitsDistributionChart', 'Peso Porcentual Unidades Disponibles');
-
-            // Añadir pie de página
-            console.log('Añadiendo pie de página...');
-            const totalPages = pdf.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(10);
-                pdf.text(`Página ${i} de ${totalPages}`, pageWidth - 25, pageHeight - 10);
-            }
-
-            // Guardar PDF
-            console.log('Guardando PDF...');
-            pdf.save('informe_inmobiliario_ecuador.pdf');
-            
-            buttonText.textContent = 'PDF Generado';
-            setTimeout(() => {
-                buttonText.textContent = 'Descargar PDF';
-                button.disabled = false;
-            }, 3000);
-            console.log('PDF generado y guardado correctamente');
-        } catch (err) {
-            console.error('Error generating PDF:', err);
-            buttonText.textContent = 'Error al generar PDF';
-            alert(`Error al generar PDF: ${err.message}`);
-            setTimeout(() => {
-                buttonText.textContent = 'Descargar PDF';
-                button.disabled = false;
-            }, 3000);
-        }
+            // Restaurar el botón después de imprimir
+            button.style.display = '';
+            button.disabled = false;
+            buttonText.textContent = 'Imprimir Informe';
+        }, 1000);
     }
 
-    // Función para asegurar que los gráficos estén renderizados
-    function ensureChartsRendered() {
-        return new Promise((resolve) => {
-            const checkCharts = setInterval(() => {
-                const allChartsReady = Chart.instances.every(chart => chart.chartArea);
-                if (allChartsReady) {
-                    clearInterval(checkCharts);
-                    resolve();
-                }
-            }, 100);
-        });
-    }
-
-    // Agregar evento de clic al botón de descarga de PDF
-    const pdfButton = document.getElementById('pdfButton');
-    if (pdfButton) {
-        pdfButton.addEventListener('click', generatePDFWithCharts);
-        console.log('Evento de clic añadido al botón de PDF');
+    // Agregar evento de clic al botón de impresión
+    const printButton = document.getElementById('printButton');
+    if (printButton) {
+        printButton.addEventListener('click', printReport);
+        console.log('Evento de clic añadido al botón de impresión');
     } else {
-        console.error('No se encontró el botón de PDF');
+        console.error('No se encontró el botón de impresión');
     }
 });
 
