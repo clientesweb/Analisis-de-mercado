@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
             hover: {
                 mode: 'nearest',
                 intersect: true
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
             }
         }
     };
@@ -59,17 +63,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'N° Proyectos 2023',
                     data: projects2023,
-                    backgroundColor: '#60A5FA'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
                 },
                 {
                     label: 'N° Proyectos 2024',
                     data: projects2024,
-                    backgroundColor: '#34D399'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
                 },
                 {
                     label: '% Variación',
                     data: projectsVariation,
-                    backgroundColor: '#FBBF24',
+                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
                     yAxisID: 'percentage'
                 }
@@ -96,17 +100,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Unidades 2023',
                     data: units2023,
-                    backgroundColor: '#60A5FA'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
                 },
                 {
                     label: 'Unidades 2024',
                     data: units2024,
-                    backgroundColor: '#34D399'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
                 },
                 {
                     label: '% Variación',
                     data: unitsVariation,
-                    backgroundColor: '#FBBF24',
+                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
                     yAxisID: 'percentage'
                 }
@@ -133,17 +137,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Absorción 2023',
                     data: absorption2023,
-                    backgroundColor: '#60A5FA'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
                 },
                 {
                     label: 'Absorción 2024',
                     data: absorption2024,
-                    backgroundColor: '#34D399'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
                 },
                 {
                     label: '% Variación',
                     data: absorptionVariation,
-                    backgroundColor: '#FBBF24',
+                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
                     yAxisID: 'percentage'
                 }
@@ -168,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
             datasets: [{
                 data: projectsDistribution,
-                backgroundColor: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA']
+                backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)']
             }]
         },
         options: {
@@ -192,6 +196,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true
             }
         }
     });
@@ -203,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
             datasets: [{
                 data: unitsDistribution,
-                backgroundColor: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#4B5563']
+                backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)', 'rgba(75, 85, 99, 0.8)']
             }]
         },
         options: {
@@ -227,13 +235,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true
             }
         }
     });
 });
 
 // Function to generate PDF
-function generatePDF() {
+async function generatePDFWithCharts() {
+    await ensureChartsRendered();
+    
     const element = document.body;
     const opt = {
         margin: 10,
@@ -248,16 +262,12 @@ function generatePDF() {
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // New Promise-based usage:
-    html2pdf().set(opt).from(element).save().catch(err => console.error('Error generating PDF:', err));
+    try {
+        await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+        console.error('Error generating PDF:', err);
+    }
 }
-
-// Adjust chart sizes on window resize
-window.addEventListener('resize', function() {
-    Chart.instances.forEach(chart => {
-        chart.resize();
-    });
-});
 
 // Function to ensure charts are fully rendered before PDF generation
 function ensureChartsRendered() {
@@ -272,12 +282,10 @@ function ensureChartsRendered() {
     });
 }
 
-// Update PDF generation to wait for charts
-async function generatePDFWithCharts() {
-    await ensureChartsRendered();
-    generatePDF();
-}
-
-// Update button click handler
-document.querySelector('button').onclick = generatePDFWithCharts;
+// Adjust chart sizes on window resize
+window.addEventListener('resize', function() {
+    Chart.instances.forEach(chart => {
+        chart.resize();
+    });
+});
 
