@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         type: 'bar',
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     ticks: { color: 'white' }
@@ -32,7 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     labels: { color: 'white' }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
                 }
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
             }
         }
     };
@@ -57,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: '% Variación',
                     data: projectsVariation,
                     backgroundColor: '#FBBF24',
+                    type: 'line',
                     yAxisID: 'percentage'
                 }
             ]
@@ -93,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: '% Variación',
                     data: unitsVariation,
                     backgroundColor: '#FBBF24',
+                    type: 'line',
                     yAxisID: 'percentage'
                 }
             ]
@@ -129,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: '% Variación',
                     data: absorptionVariation,
                     backgroundColor: '#FBBF24',
+                    type: 'line',
                     yAxisID: 'percentage'
                 }
             ]
@@ -157,9 +169,24 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     labels: { color: 'white' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '%';
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
         }
@@ -177,12 +204,42 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     labels: { color: 'white' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '%';
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
         }
     });
 });
+
+// Function to generate PDF
+function generatePDF() {
+    const element = document.body;
+    const opt = {
+        margin:       10,
+        filename:     'informe_inmobiliario_ecuador.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // New Promise-based usage:
+    html2pdf().set(opt).from(element).save();
+}
 
