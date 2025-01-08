@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    ticks: { color: 'white' }
+                    ticks: { 
+                        color: 'white',
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
                 },
                 y: {
                     ticks: { color: 'white' }
@@ -235,11 +239,18 @@ function generatePDF() {
         margin:       10,
         filename:     'informe_inmobiliario_ecuador.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     // New Promise-based usage:
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().catch(err => console.error('Error generating PDF:', err));
 }
+
+// Adjust chart sizes on window resize
+window.addEventListener('resize', function() {
+    Chart.instances.forEach(chart => {
+        chart.resize();
+    });
+});
 
