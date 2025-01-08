@@ -46,13 +46,13 @@
         }
         .chart-container {
             position: relative;
-            height: 350px; /* Increased base height */
+            height: 350px;
             width: 100%;
             margin-bottom: 1.5rem;
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 450px; /* Increased height for larger screens */
+                height: 450px;
                 margin-bottom: 2rem;
             }
         }
@@ -60,6 +60,11 @@
             .chart-container {
                 height: 300px;
                 margin-bottom: 1rem;
+            }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            .chart-container {
+                height: 250px;
             }
         }
         
@@ -91,6 +96,11 @@
             border-radius: 0.5rem;
             padding: 0.75rem;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            background-color: rgba(255, 255, 255, 0.08);
         }
         
         @media (min-width: 640px) {
@@ -106,6 +116,25 @@
         @media (max-width: 640px) {
             .grid {
                 gap: 0.5rem;
+            }
+        }
+        
+        /* Mejoras para orientación landscape en móviles */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .stats-grid {
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-card {
+                padding: 0.5rem;
+            }
+            
+            h3 {
+                margin-bottom: 0.5rem;
             }
         }
     </style>
