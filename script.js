@@ -242,30 +242,53 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    setTimeout(() => {
+        Chart.instances.forEach(chart => {
+            chart.resize();
+        });
+    }, 500);
 });
 
 // Function to generate PDF
 async function generatePDFWithCharts() {
-    await ensureChartsRendered();
+    const button = document.getElementById('pdfButton');
+    const buttonText = document.getElementById('pdfButtonText');
     
-    const element = document.body;
-    const opt = {
-        margin: 10,
-        filename: 'informe_inmobiliario_ecuador.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2, 
-            useCORS: true,
-            logging: true,
-            letterRendering: true
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
     try {
+        button.disabled = true;
+        buttonText.textContent = 'Generando PDF...';
+        
+        await ensureChartsRendered();
+        
+        const element = document.body;
+        const opt = {
+            margin: 10,
+            filename: 'informe_inmobiliario_ecuador.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: true,
+                letterRendering: true
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
         await html2pdf().set(opt).from(element).save();
+        
+        buttonText.textContent = 'PDF Generado';
+        setTimeout(() => {
+            buttonText.textContent = 'Descargar PDF';
+            button.disabled = false;
+        }, 3000);
     } catch (err) {
         console.error('Error generating PDF:', err);
+        buttonText.textContent = 'Error al generar PDF';
+        setTimeout(() => {
+            buttonText.textContent = 'Descargar PDF';
+            button.disabled = false;
+        }, 3000);
     }
 }
 
