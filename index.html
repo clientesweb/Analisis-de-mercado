@@ -10,12 +10,12 @@
     <style>
         @media print {
             @page {
-                size: 1080px 1920px;
+                size: A4;
                 margin: 0;
             }
             body {
-                width: 1080px;
-                height: 1920px;
+                width: 210mm;
+                height: 297mm;
             }
             .print-bg {
                 background: linear-gradient(to bottom, #dc2626 0%, #991b1b 50%, #000000 100%) !important;
@@ -30,6 +30,7 @@
             position: relative;
             height: 50vh;
             width: 100%;
+            page-break-inside: avoid;
         }
         @media (max-width: 640px) {
             .chart-container {
