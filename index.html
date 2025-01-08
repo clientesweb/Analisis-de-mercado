@@ -46,21 +46,64 @@
         }
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 350px; /* Increased base height */
             width: 100%;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 400px;
+                height: 450px; /* Increased height for larger screens */
                 margin-bottom: 2rem;
             }
         }
         @media (max-width: 640px) {
             .chart-container {
-                height: 250px;
+                height: 300px;
                 margin-bottom: 1rem;
             }
+        }
+        
+        /* Enhanced card styling */
+        .chart-card {
+            backdrop-filter: blur(16px);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-card:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        /* Enhanced spacing for statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 640px) {
+            .stats-grid {
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+        }
+        @media (max-width: 640px) {
             .grid {
                 gap: 0.5rem;
             }
@@ -101,18 +144,18 @@
             <!-- Charts -->
             <section class="space-y-4 sm:space-y-8">
                 <!-- Residential Projects Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-3 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Número Proyectos Residenciales (Casas –Depts) Periodo Comparativo 2023 –2024</h3>
-                    <div class="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4 text-center text-sm sm:text-base">
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                    <div class="stats-grid">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2023</p>
                             <p class="text-sm sm:text-xl font-bold">989</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2024</p>
                             <p class="text-sm sm:text-xl font-bold">1.013</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Variación</p>
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
@@ -123,18 +166,18 @@
                 </div>
 
                 <!-- Available Units Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-3 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Unidades Disponibles (Casas –Depts) 11 Principales Ciudades</h3>
-                    <div class="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4 text-center text-sm sm:text-base">
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                    <div class="stats-grid">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2023</p>
                             <p class="text-sm sm:text-xl font-bold">989</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2024</p>
                             <p class="text-sm sm:text-xl font-bold">1.013</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Variación</p>
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
@@ -145,18 +188,18 @@
                 </div>
 
                 <!-- Absorption Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-3 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Absorción Promedio Mes Proyectos Residenciales</h3>
-                    <div class="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4 text-center text-sm sm:text-base">
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                    <div class="stats-grid">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2023</p>
                             <p class="text-sm sm:text-xl font-bold">989</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Total 2024</p>
                             <p class="text-sm sm:text-xl font-bold">1.013</p>
                         </div>
-                        <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stat-card">
                             <p class="text-xs sm:text-sm opacity-80">Variación</p>
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
@@ -168,18 +211,18 @@
 
                 <!-- Distribution Charts -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 page-break">
-                    <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-3 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15">
+                    <div class="chart-card">
                         <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Peso Porcentual Oferta por Ciudad</h3>
-                        <div class="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4 text-center text-sm sm:text-base">
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stats-grid">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Total 2023</p>
                                 <p class="text-sm sm:text-xl font-bold">989</p>
                             </div>
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Total 2024</p>
                                 <p class="text-sm sm:text-xl font-bold">1.013</p>
                             </div>
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Variación</p>
                                 <p class="text-sm sm:text-xl font-bold">2,43%</p>
                             </div>
@@ -188,18 +231,18 @@
                             <canvas id="projectsDistributionChart"></canvas>
                         </div>
                     </div>
-                    <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-3 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15">
+                    <div class="chart-card">
                         <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Peso Porcentual Unidades Disponibles</h3>
-                        <div class="grid grid-cols-3 gap-1 sm:gap-2 mb-3 sm:mb-4 text-center text-sm sm:text-base">
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                        <div class="stats-grid">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Total 2023</p>
                                 <p class="text-sm sm:text-xl font-bold">989</p>
                             </div>
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Total 2024</p>
                                 <p class="text-sm sm:text-xl font-bold">1.013</p>
                             </div>
-                            <div class="bg-white/5 p-1.5 sm:p-2 rounded">
+                            <div class="stat-card">
                                 <p class="text-xs sm:text-sm opacity-80">Variación</p>
                                 <p class="text-sm sm:text-xl font-bold">2,43%</p>
                             </div>
