@@ -243,99 +243,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    setTimeout(() => {
+    // Adjust chart sizes
+    function resizeCharts() {
         Chart.instances.forEach(chart => {
             chart.resize();
         });
-    }, 500);
-});
-
-async function generatePDFWithCharts() {
-    const button = document.getElementById('pdfButton');
-    const buttonText = document.getElementById('pdfButtonText');
-    
-    try {
-        button.disabled = true;
-        buttonText.textContent = 'Generando PDF...';
-        
-        await ensureChartsRendered();
-        
-        const element = document.body;
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: true,
-            letterRendering: true,
-            allowTaint: true,
-            foreignObjectRendering: true
-        });
-        
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        
-        // Crear un blob con el PDF
-        const pdfBlob = pdf.output('blob');
-        
-        // Crear un URL para el blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        
-        // Crear un enlace temporal y hacer clic en él para descargar
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = 'informe_inmobiliario_ecuador.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Liberar el URL del objeto
-        URL.revokeObjectURL(pdfUrl);
-        
-        buttonText.textContent = 'PDF Generado';
-        setTimeout(() => {
-            buttonText.textContent = 'Descargar PDF';
-            button.disabled = false;
-        }, 3000);
-    } catch (err) {
-        console.error('Error generating PDF:', err);
-        buttonText.textContent = 'Error al generar PDF';
-        setTimeout(() => {
-            buttonText.textContent = 'Descargar PDF';
-            button.disabled = false;
-        }, 3000);
     }
-}
 
-function ensureChartsRendered() {
-    return new Promise((resolve) => {
-        const checkCharts = setInterval(() => {
-            const allChartsReady = Chart.instances.every(chart => chart.chartArea);
-            if (allChartsReady) {
-                clearInterval(checkCharts);
-                resolve();
-            }
-        }, 100);
+    // Call resize after the page has fully loaded and on window resize
+    window.addEventListener('load', () => setTimeout(resizeCharts, 500));
+    window.addEventListener('resize', resizeCharts);
+
+    // Print functionality
+    document.getElementById('printButton').addEventListener('click', function() {
+        window.print();
     });
-}
-
-// Adjust chart sizes on window resize
-window.addEventListener('resize', function() {
-    Chart.instances.forEach(chart => {
-        chart.resize();
-    });
-});
-
-// Call resize after the page has fully loaded
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        Chart.instances.forEach(chart => {
-            chart.resize();
-        });
-    }, 500);
 });
 
