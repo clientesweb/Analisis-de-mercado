@@ -18,13 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     Chart.register(ChartDataLabels);
 
-    // Configuración global para datalabels
-    Chart.defaults.set('plugins.datalabels', {
-        display: function(context) {
-            return context.dataset.type === 'line';
-        }
-    });
-
     // Chart configuration
     const config = {
         type: 'bar',
@@ -52,7 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     intersect: false
                 },
                 datalabels: {
-                    color: 'white'
+                    color: 'white',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: (value, context) => {
+                        if (context.datasetIndex === 2) {
+                            return value.toFixed(2) + '%';
+                        }
+                        return value;
+                    }
                 }
             },
             hover: {
@@ -75,12 +77,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'N° Proyectos 2023',
                     data: projects2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: 'N° Proyectos 2024',
                     data: projects2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: '% Variación',
@@ -89,10 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: 'line',
                     yAxisID: 'percentage',
                     datalabels: {
-                        formatter: (value) => value.toFixed(2) + '%',
-                        color: 'white',
-                        anchor: 'end',
-                        align: 'top'
+                        align: 'top',
+                        anchor: 'end'
                     }
                 }
             ]
@@ -118,12 +126,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Unidades 2023',
                     data: units2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: 'Unidades 2024',
                     data: units2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: '% Variación',
@@ -132,10 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: 'line',
                     yAxisID: 'percentage',
                     datalabels: {
-                        formatter: (value) => value.toFixed(2) + '%',
-                        color: 'white',
-                        anchor: 'end',
-                        align: 'top'
+                        align: 'top',
+                        anchor: 'end'
                     }
                 }
             ]
@@ -161,12 +175,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Absorción 2023',
                     data: absorption2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
+                    backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: 'Absorción 2024',
                     data: absorption2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
+                    backgroundColor: 'rgba(52, 211, 153, 0.8)',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end'
+                    }
                 },
                 {
                     label: '% Variación',
@@ -175,10 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: 'line',
                     yAxisID: 'percentage',
                     datalabels: {
-                        formatter: (value) => value.toFixed(2) + '%',
-                        color: 'white',
-                        anchor: 'end',
-                        align: 'top'
+                        align: 'top',
+                        anchor: 'end'
                     }
                 }
             ]
@@ -212,19 +232,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: {
                     labels: { color: 'white' }
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed !== null) {
-                                label += context.parsed + '%';
-                            }
-                            return label;
-                        }
-                    }
+                datalabels: {
+                    color: 'white',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: (value) => value + '%'
                 }
             },
             animation: {
@@ -251,19 +264,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: {
                     labels: { color: 'white' }
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed !== null) {
-                                label += context.parsed + '%';
-                            }
-                            return label;
-                        }
-                    }
+                datalabels: {
+                    color: 'white',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: (value) => value + '%'
                 }
             },
             animation: {
@@ -283,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call resize after the page has fully loaded and on window resize
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
-
 });
 
 // Verificar que el script se ha cargado correctamente
