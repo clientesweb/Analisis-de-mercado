@@ -272,15 +272,30 @@ async function generatePDFWithCharts() {
         });
         
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
         const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
         
-        // Usar saveAs para forzar la descarga
-        pdf.save('informe_inmobiliario_ecuador.pdf');
+        // Crear un blob con el PDF
+        const pdfBlob = pdf.output('blob');
+        
+        // Crear un URL para el blob
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Crear un enlace temporal y hacer clic en él para descargar
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'informe_inmobiliario_ecuador.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Liberar el URL del objeto
+        URL.revokeObjectURL(pdfUrl);
         
         buttonText.textContent = 'PDF Generado';
         setTimeout(() => {
