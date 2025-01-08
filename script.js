@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 50,
+                    top: 60,
                     right: 50,
                     bottom: 20,
                     left: 20
@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         maxRotation: 45,
                         minRotation: 45,
                         font: {
-                            size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 12
+                            size: window.innerWidth < 768 ? 11 : 12
                         },
-                        padding: 10
+                        padding: 15
                     },
                     grid: {
                         display: false
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 768 ? 11 : 12
                         },
                         padding: 10
                     },
@@ -64,56 +64,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: {
                     display: true,
                     position: 'top',
-                    align: 'start',
+                    align: 'center', 
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
+                            size: window.innerWidth < 768 ? 12 : 13
                         },
-                        padding: 20,
+                        padding: 25,
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        boxWidth: 8,
-                        boxHeight: 8
-                    }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += context.parsed.y;
-                                if (context.dataset.type === 'line') {
-                                    label += '%';
-                                }
-                            }
-                            return label;
-                        }
-                    },
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    borderColor: 'rgba(255, 255, 255, 0.2)',
-                    borderWidth: 1,
-                    padding: 12,
-                    titleFont: {
-                        size: 12
-                    },
-                    bodyFont: {
-                        size: 11
+                        boxWidth: 10,
+                        boxHeight: 10
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 11
+                        size: window.innerWidth < 768 ? 11 : 12
                     },
+                    padding: 6,
                     display: true,
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -136,10 +106,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         return context.datasetIndex === 0 ? 'end' : 'start';
                     },
                     offset: function(context) {
+                        const isMobile = window.innerWidth < 768;
                         if (context.datasetIndex === 2) {
-                            return context.dataset.data[context.dataIndex] >= 0 ? 10 : -10;
+                            return context.dataset.data[context.dataIndex] >= 0 ? (isMobile ? 15 : 10) : (isMobile ? -15 : -10);
                         }
-                        return context.datasetIndex === 0 ? 15 : -15;
+                        return context.datasetIndex === 0 ? (isMobile ? 20 : 15) : (isMobile ? -20 : -15);
                     },
                     rotation: 0,
                     textAlign: 'center'
@@ -153,8 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 duration: 1000,
                 easing: 'easeOutQuart'
             },
-            barPercentage: 0.7,
-            categoryPercentage: 0.6
+            barPercentage: window.innerWidth < 768 ? 0.8 : 0.7,
+            categoryPercentage: window.innerWidth < 768 ? 0.7 : 0.6
         }
     };
 
@@ -511,69 +482,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función de redimensionamiento mejorada
     function resizeCharts() {
         const width = window.innerWidth;
-        const height = window.innerHeight;
-        const isLandscape = width > height;
-        const isMobile = width < 640;
-        const isTablet = width < 768;
+        const isMobile = width < 768;
 
         Chart.instances.forEach(chart => {
-            // Ajustar posición de leyendas
-            if (chart.config.type === 'pie') {
-                chart.options.plugins.legend.position = isMobile ? 'bottom' : 
-                                                      isTablet ? 'bottom' : 
-                                                      isLandscape ? 'right' : 'bottom';
-                chart.options.plugins.datalabels.offset = isMobile ? 15 : 10;
-                chart.options.plugins.legend.labels.padding = isMobile ? 20 : 15;
-            } else {
-                chart.options.plugins.legend.position = isMobile ? 'bottom' : 'top';
-            }
-            
-            // Ajustar tamaños de fuente
-            const fontSize = isMobile ? {
-                legend: 12,
-                datalabels: 11,
-                ticks: 10
-            } : isTablet ? {
-                legend: 13,
-                datalabels: 12,
-                ticks: 11
-            } : {
-                legend: 14,
-                datalabels: 13,
-                ticks: 12
-            };
+            if (chart.config.type === 'bar') {
+                // Center legends for bar charts
+                chart.options.plugins.legend.align = 'center';
+                chart.options.plugins.legend.position = 'top';
+                
+                // Adjust font sizes for better mobile visibility
+                const fontSize = isMobile ? {
+                    legend: 12,
+                    datalabels: 11,
+                    ticks: 11
+                } : {
+                    legend: 13,
+                    datalabels: 12,
+                    ticks: 12
+                };
 
-            // Actualizar fuentes
-            chart.options.plugins.legend.labels.font.size = fontSize.legend;
-            chart.options.plugins.datalabels.font.size = fontSize.datalabels;
-            
-            if (chart.options.scales) {
+                // Update fonts
+                chart.options.plugins.legend.labels.font.size = fontSize.legend;
+                chart.options.plugins.datalabels.font.size = fontSize.datalabels;
                 chart.options.scales.x.ticks.font.size = fontSize.ticks;
                 chart.options.scales.y.ticks.font.size = fontSize.ticks;
+
+                // Adjust spacing
+                chart.options.layout.padding = isMobile ? {
+                    top: 60,
+                    right: 50,
+                    bottom: 20,
+                    left: 20
+                } : {
+                    top: 50,
+                    right: 50,
+                    bottom: 20,
+                    left: 20
+                };
+
+                // Adjust bar sizes
+                chart.options.barPercentage = isMobile ? 0.8 : 0.7;
+                chart.options.categoryPercentage = isMobile ? 0.7 : 0.6;
             }
             
-            // Ajustar espaciado
-            const padding = isMobile ? {
-                top: 40,
-                right: 40,
-                bottom: 30,
-                left: 30
-            } : {
-                top: 50,
-                right: 50,
-                bottom: 30,
-                left: 30
-            };
-            
-            chart.options.layout.padding = padding;
-            
-            // Ajustar barras
-            if (chart.config.type === 'bar') {
-                chart.options.barPercentage = isMobile ? 0.7 : 0.6;
-                chart.options.categoryPercentage = isMobile ? 0.6 : 0.5;
-            }
-            
-            // Actualizar sin animación para mejor rendimiento
+            // Update without animation
             chart.update('none');
         });
     }
