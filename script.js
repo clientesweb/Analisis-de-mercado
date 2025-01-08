@@ -522,22 +522,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 chart.options.plugins.legend.position = isMobile ? 'bottom' : 
                                                       isTablet ? 'bottom' : 
                                                       isLandscape ? 'right' : 'bottom';
+                chart.options.plugins.datalabels.offset = isMobile ? 15 : 10;
+                chart.options.plugins.legend.labels.padding = isMobile ? 20 : 15;
             } else {
                 chart.options.plugins.legend.position = isMobile ? 'bottom' : 'top';
             }
             
             // Ajustar tamaños de fuente
             const fontSize = isMobile ? {
-                legend: 10,
-                datalabels: 9,
-                ticks: 8
-            } : isTablet ? {
-                legend: 11,
-                datalabels: 10,
-                ticks: 9
-            } : {
                 legend: 12,
                 datalabels: 11,
+                ticks: 10
+            } : isTablet ? {
+                legend: 13,
+                datalabels: 12,
+                ticks: 11
+            } : {
+                legend: 14,
+                datalabels: 13,
                 ticks: 12
             };
 
@@ -552,23 +554,23 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Ajustar espaciado
             const padding = isMobile ? {
-                top: 30,
-                right: 30,
-                bottom: 20,
-                left: 20
+                top: 40,
+                right: 40,
+                bottom: 30,
+                left: 30
             } : {
                 top: 50,
                 right: 50,
-                bottom: 20,
-                left: 20
+                bottom: 30,
+                left: 30
             };
             
             chart.options.layout.padding = padding;
             
             // Ajustar barras
             if (chart.config.type === 'bar') {
-                chart.options.barPercentage = isMobile ? 0.8 : 0.7;
-                chart.options.categoryPercentage = isMobile ? 0.7 : 0.6;
+                chart.options.barPercentage = isMobile ? 0.7 : 0.6;
+                chart.options.categoryPercentage = isMobile ? 0.6 : 0.5;
             }
             
             // Actualizar sin animación para mejor rendimiento
