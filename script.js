@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         font: {
                             size: window.innerWidth < 768 ? 8 : 12
                         },
-                        autoSkip: true,
-                        maxTicksLimit: window.innerWidth < 768 ? 6 : 11
+                        autoSkip: false,
+                        maxTicksLimit: 11
                     },
                     grid: {
                         display: false
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     padding: 4,
                     display: function(context) {
-                        return context.datasetIndex !== 2;
+                        return context.datasetIndex !== 2 || (context.dataIndex % 2 === 0);
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             },
-            barPercentage: window.innerWidth < 768 ? 0.8 : 0.6,
-            categoryPercentage: window.innerWidth < 768 ? 0.9 : 0.7
+            barPercentage: 0.8,
+            categoryPercentage: 0.7
         }
     };
 
@@ -114,22 +114,22 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 30,
-                    right: 30,
-                    bottom: 30,
-                    left: 30
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                    left: 20
                 }
             },
             plugins: {
                 legend: {
-                    position: window.innerWidth < 640 ? 'bottom' : window.innerWidth < 768 ? 'bottom' : 'right',
+                    position: 'right',
                     align: 'center',
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
+                            size: window.innerWidth < 768 ? 10 : 12
                         },
-                        padding: 15,
+                        padding: 10,
                         usePointStyle: true,
                         pointStyle: 'circle',
                         boxWidth: 8,
@@ -140,16 +140,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
+                        size: window.innerWidth < 768 ? 9 : 11
                     },
                     formatter: (value, ctx) => {
-                        const label = ctx.chart.data.labels[ctx.dataIndex];
-                        return `${label}\n${value}%`;
+                        return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
                     },
                     textAlign: 'center',
                     anchor: 'end',
                     align: 'end',
-                    offset: 10,
+                    offset: 5,
                     display: true
                 }
             },
@@ -218,8 +217,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: projects2024,
                     backgroundColor: createGradient(projectsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
@@ -235,9 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4,
-                        display: true,
-                        formatter: (value) => value.toFixed(1) + '%'
+                        offset: 4
                     }
                 }
             ]
@@ -286,8 +283,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: units2024,
                     backgroundColor: createGradient(unitsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
@@ -303,9 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4,
-                        display: true,
-                        formatter: (value) => value.toFixed(1) + '%'
+                        offset: 4
                     }
                 }
             ]
@@ -354,8 +349,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: absorption2024,
                     backgroundColor: createGradient(absorptionCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
@@ -371,9 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4,
-                        display: true,
-                        formatter: (value) => value.toFixed(1) + '%'
+                        offset: 4
                     }
                 }
             ]
@@ -417,24 +410,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     colors.purple.start
                 ]
             }]
-        },
-        options: {
-            ...pieConfig.options,
-            plugins: {
-                ...pieConfig.options.plugins,
-                datalabels: {
-                    ...pieConfig.options.plugins.datalabels,
-                    formatter: (value, ctx) => {
-                        return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
-                    },
-                    textAlign: 'center',
-                    color: 'white',
-                    font: {
-                        weight: 'bold',
-                        size: window.innerWidth < 640 ? 9 : 11
-                    }
-                }
-            }
         }
     });
 
@@ -455,24 +430,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     colors.gray.start
                 ]
             }]
-        },
-        options: {
-            ...pieConfig.options,
-            plugins: {
-                ...pieConfig.options.plugins,
-                datalabels: {
-                    ...pieConfig.options.plugins.datalabels,
-                    formatter: (value, ctx) => {
-                        return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
-                    },
-                    textAlign: 'center',
-                    color: 'white',
-                    font: {
-                        weight: 'bold',
-                        size: window.innerWidth < 640 ? 9 : 11
-                    }
-                }
-            }
         }
     });
 
@@ -510,25 +467,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     left: 10
                 };
 
-                chart.options.barPercentage = isMobile ? 0.8 : 0.6;
-                chart.options.categoryPercentage = isMobile ? 0.9 : 0.7;
-                chart.options.scales.x.ticks.maxTicksLimit = isMobile ? 6 : 11;
+                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
+                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
+            } else if (chart.config.type === 'pie') {
+                chart.options.plugins.legend.position = isMobile ? 'bottom' : 'right';
+                chart.options.plugins.legend.labels.font.size = isMobile ? 10 : 12;
             }
             
             chart.update('none');
-        });
-    }
-
-    function adjustBarSpacing() {
-        const width = window.innerWidth;
-        const isMobile = width < 768;
-
-        Chart.instances.forEach(chart => {
-            if (chart.config.type === 'bar') {
-                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
-                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
-                chart.update('none');
-            }
         });
     }
 
@@ -536,12 +482,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => {
         setTimeout(() => {
             resizeCharts();
-            adjustBarSpacing();
         }, 500);
     });
     window.addEventListener('resize', debounce(() => {
         resizeCharts();
-        adjustBarSpacing();
     }, 250));
     window.addEventListener('orientationchange', () => {
         setTimeout(resizeCharts, 250);
