@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 40,
-                    right: 35,
-                    bottom: 10,
-                    left: 15
+                    top: 50,
+                    right: 50,
+                    bottom: 20,
+                    left: 20
                 }
             },
             scales: {
@@ -39,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         maxRotation: 45,
                         minRotation: 45,
                         font: {
-                            size: window.innerWidth < 640 ? 7 : window.innerWidth < 768 ? 8 : 12
-                        }
+                            size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 12
+                        },
+                        padding: 10
                     },
                     grid: {
                         display: false
@@ -62,14 +63,14 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     display: true,
-                    position: window.innerWidth < 640 ? 'bottom' : 'top',
+                    position: 'top',
                     align: 'start',
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
                         },
-                        padding: window.innerWidth < 640 ? 10 : 15,
+                        padding: 20,
                         usePointStyle: true,
                         pointStyle: 'circle',
                         boxWidth: 8,
@@ -99,26 +100,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     bodyColor: 'white',
                     borderColor: 'rgba(255, 255, 255, 0.2)',
                     borderWidth: 1,
-                    padding: 10,
+                    padding: 12,
                     titleFont: {
-                        size: window.innerWidth < 640 ? 10 : 12
+                        size: 12
                     },
                     bodyFont: {
-                        size: window.innerWidth < 640 ? 9 : 11
+                        size: 11
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 11
+                        size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 11
                     },
-                    display: function(context) {
-                        if (window.innerWidth < 480) {
-                            return context.datasetIndex === 2;
-                        }
-                        return true;
-                    },
+                    display: true,
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
                             return value.toFixed(1) + '%';
@@ -140,14 +136,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         return context.datasetIndex === 0 ? 'end' : 'start';
                     },
                     offset: function(context) {
-                        return context.datasetIndex === 2 ? 8 : 4;
-                    },
-                    rotation: function(context) {
-                        if (context.datasetIndex !== 2 && window.innerWidth < 768) {
-                            return -45;
+                        if (context.datasetIndex === 2) {
+                            return context.dataset.data[context.dataIndex] >= 0 ? 10 : -10;
                         }
-                        return 0;
-                    }
+                        return context.datasetIndex === 0 ? 15 : -15;
+                    },
+                    rotation: 0,
+                    textAlign: 'center'
                 }
             },
             hover: {
@@ -158,8 +153,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 duration: 1000,
                 easing: 'easeOutQuart'
             },
-            barPercentage: 0.8,
-            categoryPercentage: 0.7
+            barPercentage: 0.7,
+            categoryPercentage: 0.6
         }
     };
 
@@ -170,10 +165,10 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
+                    top: 30,
+                    right: 30,
+                    bottom: 30,
+                    left: 30
                 }
             },
             plugins: {
@@ -183,9 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
                         },
-                        padding: window.innerWidth < 640 ? 8 : 12,
+                        padding: 15,
                         usePointStyle: true,
                         pointStyle: 'circle',
                         boxWidth: 8,
@@ -196,17 +191,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 11
+                        size: window.innerWidth < 640 ? 10 : window.innerWidth < 768 ? 11 : 12
                     },
                     formatter: (value, ctx) => {
                         const label = ctx.chart.data.labels[ctx.dataIndex];
-                        return window.innerWidth < 640 ? 
-                            value + '%' : 
-                            `${label}\n${value}%`;
+                        return `${label}\n${value}%`;
                     },
+                    textAlign: 'center',
                     anchor: 'end',
                     align: 'end',
-                    offset: 8,
+                    offset: 10,
                     display: true
                 }
             },
@@ -217,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Función para crear degradados más atractivos
+    // Función mejorada para crear degradados
     function createGradient(ctx, colorStart, colorEnd) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, colorStart);
@@ -225,19 +219,31 @@ document.addEventListener('DOMContentLoaded', function() {
         return gradient;
     }
 
-    // Colores consistentes para todos los gráficos
+    // Colores mejorados y consistentes
     const colors = {
         blue: {
-            start: 'rgba(96, 165, 250, 0.9)',
-            end: 'rgba(96, 165, 250, 0.6)'
+            start: 'rgba(96, 165, 250, 0.95)',
+            end: 'rgba(96, 165, 250, 0.7)'
         },
         green: {
-            start: 'rgba(52, 211, 153, 0.9)',
-            end: 'rgba(52, 211, 153, 0.6)'
+            start: 'rgba(52, 211, 153, 0.95)',
+            end: 'rgba(52, 211, 153, 0.7)'
         },
         yellow: {
-            start: 'rgba(251, 191, 36, 0.9)',
-            end: 'rgba(251, 191, 36, 0.6)'
+            start: 'rgba(251, 191, 36, 0.95)',
+            end: 'rgba(251, 191, 36, 0.7)'
+        },
+        red: {
+            start: 'rgba(248, 113, 113, 0.95)',
+            end: 'rgba(248, 113, 113, 0.7)'
+        },
+        purple: {
+            start: 'rgba(167, 139, 250, 0.95)',
+            end: 'rgba(167, 139, 250, 0.7)'
+        },
+        gray: {
+            start: 'rgba(75, 85, 99, 0.95)',
+            end: 'rgba(75, 85, 99, 0.7)'
         }
     };
 
@@ -439,8 +445,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     colors.blue.start,
                     colors.green.start,
                     colors.yellow.start,
-                    'rgba(248, 113, 113, 0.9)',
-                    'rgba(167, 139, 250, 0.9)'
+                    colors.red.start,
+                    colors.purple.start
                 ]
             }]
         },
@@ -476,9 +482,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     colors.blue.start,
                     colors.green.start,
                     colors.yellow.start,
-                    'rgba(248, 113, 113, 0.9)',
-                    'rgba(167, 139, 250, 0.9)',
-                    'rgba(75, 85, 99, 0.9)'
+                    colors.red.start,
+                    colors.purple.start,
+                    colors.gray.start
                 ]
             }]
         },
@@ -502,37 +508,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mejorada función de redimensionamiento
+    // Función de redimensionamiento mejorada
     function resizeCharts() {
         const width = window.innerWidth;
         const height = window.innerHeight;
         const isLandscape = width > height;
+        const isMobile = width < 640;
+        const isTablet = width < 768;
 
         Chart.instances.forEach(chart => {
-            // Ajustar posición de leyendas basado en orientación
+            // Ajustar posición de leyendas
             if (chart.config.type === 'pie') {
-                chart.options.plugins.legend.position = width < 640 ? 'bottom' : 
-                                                      width < 768 ? 'bottom' : 
+                chart.options.plugins.legend.position = isMobile ? 'bottom' : 
+                                                      isTablet ? 'bottom' : 
                                                       isLandscape ? 'right' : 'bottom';
             } else {
-                chart.options.plugins.legend.position = width < 640 ? 'bottom' : 'top';
+                chart.options.plugins.legend.position = isMobile ? 'bottom' : 'top';
             }
             
             // Ajustar tamaños de fuente
-            const fontSize = width < 640 ? {
-                legend: 9,
-                datalabels: 8,
-                ticks: 7
-            } : width < 768 ? {
+            const fontSize = isMobile ? {
                 legend: 10,
                 datalabels: 9,
                 ticks: 8
+            } : isTablet ? {
+                legend: 11,
+                datalabels: 10,
+                ticks: 9
             } : {
                 legend: 12,
                 datalabels: 11,
                 ticks: 12
             };
 
+            // Actualizar fuentes
             chart.options.plugins.legend.labels.font.size = fontSize.legend;
             chart.options.plugins.datalabels.font.size = fontSize.datalabels;
             
@@ -542,29 +551,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Ajustar espaciado
-            chart.options.layout.padding = width < 640 ? {
-                top: 20,
-                right: 20,
-                bottom: 10,
-                left: 10
+            const padding = isMobile ? {
+                top: 30,
+                right: 30,
+                bottom: 20,
+                left: 20
             } : {
-                top: 40,
-                right: 35,
-                bottom: 10,
-                left: 15
+                top: 50,
+                right: 50,
+                bottom: 20,
+                left: 20
             };
             
-            // Ajustar formato de etiquetas para gráficos de pie
-            if (chart.config.type === 'pie') {
-                chart.options.plugins.datalabels.formatter = (value, ctx) => {
-                    const label = ctx.chart.data.labels[ctx.dataIndex];
-                    return width < 640 ? 
-                        value + '%' : 
-                        `${label}\n${value}%`;
-                };
+            chart.options.layout.padding = padding;
+            
+            // Ajustar barras
+            if (chart.config.type === 'bar') {
+                chart.options.barPercentage = isMobile ? 0.8 : 0.7;
+                chart.options.categoryPercentage = isMobile ? 0.7 : 0.6;
             }
             
-            chart.update('none'); // Actualizar sin animación para mejor rendimiento
+            // Actualizar sin animación para mejor rendimiento
+            chart.update('none');
         });
     }
 
