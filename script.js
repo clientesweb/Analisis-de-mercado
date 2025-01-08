@@ -29,31 +29,68 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        font: {
+                            size: window.innerWidth < 768 ? 8 : 12
+                        }
                     }
                 },
                 y: {
-                    ticks: { color: 'white' }
+                    ticks: { 
+                        color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
                 }
             },
             plugins: {
                 legend: {
-                    labels: { color: 'white' }
+                    labels: { 
+                        color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
                 },
                 tooltip: {
                     mode: 'index',
-                    intersect: false
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y;
+                                if (context.dataset.type === 'line') {
+                                    label += '%';
+                                }
+                            }
+                            return label;
+                        }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1
                 },
                 datalabels: {
                     color: 'white',
                     font: {
-                        weight: 'bold'
+                        weight: 'bold',
+                        size: window.innerWidth < 768 ? 9 : 11
+                    },
+                    display: function(context) {
+                        return window.innerWidth >= 768 || context.datasetIndex === 2;
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
                             return value.toFixed(2) + '%';
                         }
-                        return value;
+                        return window.innerWidth < 768 ? '' : value;
                     }
                 }
             },
@@ -64,6 +101,37 @@ document.addEventListener('DOMContentLoaded', function() {
             animation: {
                 duration: 1000,
                 easing: 'easeOutQuart'
+            }
+        }
+    };
+
+    const pieConfig = {
+        type: 'pie',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: window.innerWidth < 768 ? 'bottom' : 'right',
+                    labels: { 
+                        color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
+                    }
+                },
+                datalabels: {
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: window.innerWidth < 768 ? 9 : 11
+                    },
+                    formatter: (value) => value + '%'
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true
             }
         }
     };
@@ -217,72 +285,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Projects Distribution Chart
     new Chart(document.getElementById('projectsDistributionChart'), {
-        type: 'pie',
+        ...pieConfig,
         data: {
             labels: ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
             datasets: [{
                 data: projectsDistribution,
                 backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)']
             }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                },
-                datalabels: {
-                    color: 'white',
-                    font: {
-                        weight: 'bold'
-                    },
-                    formatter: (value) => value + '%'
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
         }
     });
 
     // Units Distribution Chart
     new Chart(document.getElementById('unitsDistributionChart'), {
-        type: 'pie',
+        ...pieConfig,
         data: {
             labels: ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
             datasets: [{
                 data: unitsDistribution,
                 backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)', 'rgba(75, 85, 99, 0.8)']
             }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                },
-                datalabels: {
-                    color: 'white',
-                    font: {
-                        weight: 'bold'
-                    },
-                    formatter: (value) => value + '%'
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
         }
     });
 
     // Adjust chart sizes
     function resizeCharts() {
         Chart.instances.forEach(chart => {
-            chart.resize();
+            if (chart.config.type === 'pie') {
+                chart.options.plugins.legend.position = window.innerWidth < 768 ? 'bottom' : 'right';
+            }
+            chart.options.plugins.legend.labels.font.size = window.innerWidth < 768 ? 10 : 12;
+            chart.options.plugins.datalabels.font.size = window.innerWidth < 768 ? 9 : 11;
+            if (chart.options.scales) {
+                chart.options.scales.x.ticks.font.size = window.innerWidth < 768 ? 8 : 12;
+                chart.options.scales.y.ticks.font.size = window.innerWidth < 768 ? 10 : 12;
+            }
+            chart.update();
         });
     }
 
