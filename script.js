@@ -23,194 +23,66 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {
-                    ticks: { 
-                        color: 'white',
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                },
-                y: {
-                    ticks: { color: 'white' }
-                }
+                x: { ticks: { color: 'white', maxRotation: 45, minRotation: 45 } },
+                y: { ticks: { color: 'white' } }
             },
             plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
+                legend: { labels: { color: 'white' } },
+                tooltip: { mode: 'index', intersect: false }
             },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
-            }
+            animation: { duration: 1000, easing: 'easeOutQuart' }
         }
     };
 
-    // Residential Projects Chart
-    new Chart(document.getElementById('residentialProjectsChart'), {
-        ...config,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'N° Proyectos 2023',
-                    data: projects2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
-                },
-                {
-                    label: 'N° Proyectos 2024',
-                    data: projects2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
-                },
-                {
-                    label: '% Variación',
-                    data: projectsVariation,
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
-                    type: 'line',
-                    yAxisID: 'percentage'
-                }
-            ]
-        },
+    // Create charts
+    createChart('residentialProjectsChart', cities, [
+        { label: 'N° Proyectos 2023', data: projects2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
+        { label: 'N° Proyectos 2024', data: projects2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
+        { label: '% Variación', data: projectsVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
+    ]);
+
+    createChart('availableUnitsChart', cities, [
+        { label: 'Unidades 2023', data: units2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
+        { label: 'Unidades 2024', data: units2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
+        { label: '% Variación', data: unitsVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
+    ]);
+
+    createChart('absorptionChart', cities, [
+        { label: 'Absorción 2023', data: absorption2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
+        { label: 'Absorción 2024', data: absorption2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
+        { label: '% Variación', data: absorptionVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
+    ]);
+
+    createPieChart('projectsDistributionChart', ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'], projectsDistribution);
+    createPieChart('unitsDistributionChart', ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'], unitsDistribution);
+
+    // Resize charts after a short delay
+    setTimeout(() => {
+        Chart.instances.forEach(chart => chart.resize());
+    }, 500);
+});
+
+function createChart(id, labels, datasets) {
+    new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: { labels, datasets },
         options: {
             ...config.options,
             scales: {
                 ...config.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { color: 'white' }
-                }
+                percentage: { position: 'right', ticks: { color: 'white' } }
             }
         }
     });
+}
 
-    // Available Units Chart
-    new Chart(document.getElementById('availableUnitsChart'), {
-        ...config,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'Unidades 2023',
-                    data: units2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
-                },
-                {
-                    label: 'Unidades 2024',
-                    data: units2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
-                },
-                {
-                    label: '% Variación',
-                    data: unitsVariation,
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
-                    type: 'line',
-                    yAxisID: 'percentage'
-                }
-            ]
-        },
-        options: {
-            ...config.options,
-            scales: {
-                ...config.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { color: 'white' }
-                }
-            }
-        }
-    });
-
-    // Absorption Chart
-    new Chart(document.getElementById('absorptionChart'), {
-        ...config,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'Absorción 2023',
-                    data: absorption2023,
-                    backgroundColor: 'rgba(96, 165, 250, 0.8)'
-                },
-                {
-                    label: 'Absorción 2024',
-                    data: absorption2024,
-                    backgroundColor: 'rgba(52, 211, 153, 0.8)'
-                },
-                {
-                    label: '% Variación',
-                    data: absorptionVariation,
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
-                    type: 'line',
-                    yAxisID: 'percentage'
-                }
-            ]
-        },
-        options: {
-            ...config.options,
-            scales: {
-                ...config.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { color: 'white' }
-                }
-            }
-        }
-    });
-
-    // Projects Distribution Chart
-    new Chart(document.getElementById('projectsDistributionChart'), {
+function createPieChart(id, labels, data) {
+    new Chart(document.getElementById(id), {
         type: 'pie',
         data: {
-            labels: ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
+            labels,
             datasets: [{
-                data: projectsDistribution,
-                backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed !== null) {
-                                label += context.parsed + '%';
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
-        }
-    });
-
-    // Units Distribution Chart
-    new Chart(document.getElementById('unitsDistributionChart'), {
-        type: 'pie',
-        data: {
-            labels: ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
-            datasets: [{
-                data: unitsDistribution,
+                data,
                 backgroundColor: ['rgba(96, 165, 250, 0.8)', 'rgba(52, 211, 153, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(248, 113, 113, 0.8)', 'rgba(167, 139, 250, 0.8)', 'rgba(75, 85, 99, 0.8)']
             }]
         },
@@ -218,39 +90,20 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    labels: { color: 'white' }
-                },
+                legend: { labels: { color: 'white' } },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed !== null) {
-                                label += context.parsed + '%';
-                            }
-                            return label;
+                            return `${context.label}: ${context.parsed}%`;
                         }
                     }
                 }
             },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
+            animation: { animateRotate: true, animateScale: true }
         }
     });
+}
 
-    setTimeout(() => {
-        Chart.instances.forEach(chart => {
-            chart.resize();
-        });
-    }, 500);
-});
-
-// Function to generate PDF
 async function generatePDFWithCharts() {
     const button = document.getElementById('pdfButton');
     const buttonText = document.getElementById('pdfButtonText');
@@ -259,14 +112,11 @@ async function generatePDFWithCharts() {
         button.disabled = true;
         buttonText.textContent = 'Generando PDF...';
         
-        await ensureChartsRendered();
-        
         const element = document.body;
         const canvas = await html2canvas(element, {
             scale: 2,
             useCORS: true,
             logging: true,
-            letterRendering: true,
             allowTaint: true,
             foreignObjectRendering: true
         });
@@ -279,23 +129,7 @@ async function generatePDFWithCharts() {
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        
-        // Crear un blob con el PDF
-        const pdfBlob = pdf.output('blob');
-        
-        // Crear un URL para el blob
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        
-        // Crear un enlace temporal y hacer clic en él para descargar
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = 'informe_inmobiliario_ecuador.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Liberar el URL del objeto
-        URL.revokeObjectURL(pdfUrl);
+        pdf.save('informe_inmobiliario_ecuador.pdf');
         
         buttonText.textContent = 'PDF Generado';
         setTimeout(() => {
@@ -312,32 +146,13 @@ async function generatePDFWithCharts() {
     }
 }
 
-// Function to ensure charts are fully rendered before PDF generation
-function ensureChartsRendered() {
-    return new Promise((resolve) => {
-        const checkCharts = setInterval(() => {
-            const allChartsReady = Chart.instances.every(chart => chart.chartArea);
-            if (allChartsReady) {
-                clearInterval(checkCharts);
-                resolve();
-            }
-        }, 100);
-    });
-}
-
-// Adjust chart sizes on window resize
 window.addEventListener('resize', function() {
-    Chart.instances.forEach(chart => {
-        chart.resize();
-    });
+    Chart.instances.forEach(chart => chart.resize());
 });
 
-// Call resize after the page has fully loaded
 window.addEventListener('load', function() {
     setTimeout(() => {
-        Chart.instances.forEach(chart => {
-            chart.resize();
-        });
+        Chart.instances.forEach(chart => chart.resize());
     }, 500);
 });
 
