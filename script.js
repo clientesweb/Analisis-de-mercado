@@ -181,6 +181,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     position: 'right',
                     ticks: { color: 'white' }
                 }
+            },
+            animation: {
+                duration: 0 // Deshabilitar animaciones para PDF
+            },
+            plugins: {
+                ...config.options.plugins,
+                datalabels: {
+                    ...config.options.plugins.datalabels,
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 11
+                    }
+                }
             }
         }
     });
@@ -229,6 +243,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 percentage: {
                     position: 'right',
                     ticks: { color: 'white' }
+                }
+            },
+            animation: {
+                duration: 0 // Deshabilitar animaciones para PDF
+            },
+            plugins: {
+                ...config.options.plugins,
+                datalabels: {
+                    ...config.options.plugins.datalabels,
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 11
+                    }
                 }
             }
         }
@@ -279,6 +307,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     position: 'right',
                     ticks: { color: 'white' }
                 }
+            },
+            animation: {
+                duration: 0 // Deshabilitar animaciones para PDF
+            },
+            plugins: {
+                ...config.options.plugins,
+                datalabels: {
+                    ...config.options.plugins.datalabels,
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 11
+                    }
+                }
             }
         }
     });
@@ -326,6 +368,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call resize after the page has fully loaded and on window resize
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
+});
+
+// PDF Generation
+document.getElementById('downloadPDF').addEventListener('click', function() {
+    const element = document.querySelector('.container');
+    const opt = {
+        margin: 10,
+        filename: 'informe-inmobiliario-ecuador.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            letterRendering: true
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait' 
+        }
+    };
+
+    // Mostrar mensaje de carga
+    const loadingToast = document.createElement('div');
+    loadingToast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-lg border border-white/20 z-50';
+    loadingToast.textContent = 'Generando PDF...';
+    document.body.appendChild(loadingToast);
+
+    // Generar PDF
+    html2pdf().set(opt).from(element).save().then(() => {
+        loadingToast.textContent = 'PDF generado con éxito!';
+        setTimeout(() => loadingToast.remove(), 2000);
+    }).catch(err => {
+        loadingToast.textContent = 'Error al generar PDF';
+        setTimeout(() => loadingToast.remove(), 2000);
+        console.error('Error al generar PDF:', err);
+    });
 });
 
 // Verificar que el script se ha cargado correctamente
