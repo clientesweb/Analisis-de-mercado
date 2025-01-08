@@ -18,21 +18,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     Chart.register(ChartDataLabels);
 
-    // Colores mejorados y consistentes
+    // Colores mejorados con mayor intensidad y claridad
     const colors = {
-        blue: 'rgba(59, 130, 246, 0.8)',
-        green: 'rgba(16, 185, 129, 0.8)',
-        yellow: 'rgba(245, 158, 11, 0.8)',
-        red: 'rgba(239, 68, 68, 0.8)',
-        purple: 'rgba(139, 92, 246, 0.8)',
-        gray: 'rgba(107, 114, 128, 0.8)'
+        blue: 'rgba(37, 99, 235, 1)', // Azul más intenso
+        green: 'rgba(5, 150, 105, 1)', // Verde más intenso
+        yellow: 'rgba(245, 158, 11, 1)', // Amarillo más brillante
+        red: 'rgba(220, 38, 38, 1)', // Rojo más intenso
+        purple: 'rgba(124, 58, 237, 1)', // Morado más intenso
+        gray: 'rgba(75, 85, 99, 1)' // Gris más oscuro
     };
 
-    // Función para crear degradados
+    // Función para crear degradados más intensos
     function createGradient(ctx, color) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, color);
-        gradient.addColorStop(1, color.replace('0.8', '0.4'));
+        gradient.addColorStop(1, color.replace('1)', '0.7)')); // Menos transparencia en el degradado
         return gradient;
     }
 
@@ -89,15 +89,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     display: true,
                     position: 'top',
                     labels: { 
-                        color: 'white',
+                        color: 'rgba(255, 255, 255, 1)',
                         font: {
-                            size: () => isMobile() ? 10 : 14
+                            size: () => isMobile() ? 10 : 14,
+                            weight: 'bold'
                         },
-                        padding: () => isMobile() ? 10 : 20
+                        padding: () => isMobile() ? 10 : 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
                     }
                 },
                 datalabels: {
-                    color: 'white',
+                    color: 'rgba(255, 255, 255, 1)',
                     font: {
                         weight: 'bold',
                         size: () => isMobile() ? 0 : 12
@@ -113,10 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     align: 'top',
                     offset: 0,
                     rotation: -45,
-                    textStrokeColor: 'black',
-                    textStrokeWidth: 1,
-                    textShadowBlur: 5,
-                    textShadowColor: 'black'
+                    textStrokeColor: 'rgba(0, 0, 0, 0.8)',
+                    textStrokeWidth: 3,
+                    textShadowBlur: 10,
+                    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+                    borderWidth: 2,
+                    borderRadius: 4
                 }
             },
             barPercentage: 0.8,
@@ -180,6 +185,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         enabled: true,
                         mode: 'index',
                         intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        titleColor: 'rgba(255, 255, 255, 1)',
+                        bodyColor: 'rgba(255, 255, 255, 1)',
+                        bodyFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: true,
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1,
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
@@ -206,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             return value.toLocaleString();
                         },
                         color: (context) => {
-                            return context.dataset.type === 'line' ? 'yellow' : 'white';
+                            return context.dataset.type === 'line' ? colors.yellow : 'white';
                         },
                         anchor: (context) => {
                             return context.dataset.type === 'line' ? 'center' : 'end';
@@ -242,20 +259,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: {
                     position: () => isMobile() ? 'bottom' : 'right',
                     labels: { 
-                        color: 'white',
+                        color: 'rgba(255, 255, 255, 1)',
                         font: {
-                            size: () => isMobile() ? 10 : 12
+                            size: () => isMobile() ? 11 : 13,
+                            weight: 'bold'
                         },
-                        padding: () => isMobile() ? 10 : 20,
+                        padding: () => isMobile() ? 15 : 25,
                         usePointStyle: true,
                         pointStyle: 'circle'
                     }
                 },
                 datalabels: {
-                    color: 'white',
+                    color: 'rgba(255, 255, 255, 1)',
                     font: {
                         weight: 'bold',
-                        size: () => isMobile() ? 0 : 14
+                        size: () => isMobile() ? 0 : 16
                     },
                     formatter: (value, context) => {
                         if (isMobile()) return null;
@@ -264,25 +282,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     anchor: 'center',
                     align: 'center',
                     offset: 0,
-                    textStrokeColor: 'rgba(0, 0, 0, 0.5)',
-                    textStrokeWidth: 2,
-                    textShadowBlur: 5,
-                    textShadowColor: 'black'
+                    textStrokeColor: 'rgba(0, 0, 0, 0.8)',
+                    textStrokeWidth: 3,
+                    textShadowBlur: 10,
+                    textShadowColor: 'rgba(0, 0, 0, 0.8)'
                 },
                 tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed !== null) {
-                                label += context.parsed + '%';
-                            }
-                            return label;
-                        }
-                    }
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    titleColor: 'rgba(255, 255, 255, 1)',
+                    bodyColor: 'rgba(255, 255, 255, 1)',
+                    bodyFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1
                 }
             }
         }
@@ -297,13 +314,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        'rgba(59, 130, 246, 0.8)', // Azul
-                        'rgba(16, 185, 129, 0.8)', // Verde
-                        'rgba(245, 158, 11, 0.8)', // Amarillo
-                        'rgba(239, 68, 68, 0.8)',  // Rojo
-                        'rgba(139, 92, 246, 0.8)', // Morado
-                        'rgba(107, 114, 128, 0.8)' // Gris
-                    ]
+                        colors.blue,
+                        colors.green,
+                        colors.yellow,
+                        colors.red,
+                        colors.purple,
+                        colors.gray
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -317,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Agregar los totales encima del gráfico
+        // Agregar los totales encima del gráfico con estilos mejorados
         const container = ctx.canvas.parentNode;
         const statsDiv = document.createElement('div');
         statsDiv.className = 'stats-container';
@@ -331,19 +350,23 @@ document.addEventListener('DOMContentLoaded', function() {
         statsDiv.style.padding = '1rem';
         statsDiv.style.color = 'white';
         statsDiv.style.textAlign = 'center';
+        statsDiv.style.background = 'rgba(0, 0, 0, 0.2)';
+        statsDiv.style.borderRadius = '8px';
+        statsDiv.style.backdropFilter = 'blur(8px)';
+        statsDiv.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
 
         statsDiv.innerHTML = `
             <div>
-                <div style="font-size: 0.875rem; opacity: 0.8">Total 2023</div>
-                <div style="font-size: 1.25rem; font-weight: bold">${totals.y2023}</div>
+                <div style="font-size: 0.875rem; opacity: 0.9; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.5)">Total 2023</div>
+                <div style="font-size: 1.25rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">${totals.y2023}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; opacity: 0.8">Total 2024</div>
-                <div style="font-size: 1.25rem; font-weight: bold">${totals.y2024}</div>
+                <div style="font-size: 0.875rem; opacity: 0.9; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.5)">Total 2024</div>
+                <div style="font-size: 1.25rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">${totals.y2024}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; opacity: 0.8">Variación</div>
-                <div style="font-size: 1.25rem; font-weight: bold">${totals.variation}%</div>
+                <div style="font-size: 0.875rem; opacity: 0.9; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.5)">Variación</div>
+                <div style="font-size: 1.25rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5)">${totals.variation}%</div>
             </div>
         `;
 
@@ -376,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
         unitsDistCtx, 
         unitsDistribution, 
         ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
-        { y2023: 989, y2024: 1013, variation: 2.43 }
+        { y2023: 26964, y2024: 25787, variation: -4.37 }
     );
 
     // Función de redimensionamiento
