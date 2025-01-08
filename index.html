@@ -46,7 +46,7 @@
         }
         .chart-container {
             position: relative;
-            height: 450px; /* Increased base height */
+            height: 450px;
             width: 100%;
             margin-bottom: 2rem;
         }
@@ -54,6 +54,12 @@
             .chart-container {
                 height: 550px;
                 margin-bottom: 3rem;
+            }
+        }
+        @media (max-width: 767px) {
+            .chart-container {
+                height: 600px; /* Increased significantly for mobile */
+                margin-bottom: 2.5rem;
             }
         }
         @media (max-width: 640px) {
@@ -79,9 +85,9 @@
             transition: all 0.3s ease;
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 767px) {
             .chart-card {
-                padding: 1.5rem;
+                padding: 2rem 1rem;
                 margin-bottom: 2rem;
             }
         }
