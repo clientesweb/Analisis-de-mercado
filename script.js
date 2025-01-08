@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return gradient;
     }
 
+    // Función para detectar si es un dispositivo móvil
+    function isMobile() {
+        return window.matchMedia("(max-width: 768px)").matches;
+    }
+
     // Configuración común para los gráficos de barras
     const barChartConfig = {
         type: 'bar',
@@ -55,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => isMobile() ? 8 : 12
                         },
                         maxRotation: 45,
                         minRotation: 45
@@ -68,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => isMobile() ? 8 : 12
                         },
                         callback: function(value) {
                             return value.toLocaleString();
@@ -86,18 +91,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: 14
+                            size: () => isMobile() ? 10 : 14
                         },
-                        padding: 20
+                        padding: () => isMobile() ? 10 : 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: 12
+                        size: () => isMobile() ? 0 : 12
                     },
                     formatter: (value, context) => {
+                        if (isMobile()) return null;
                         if (context.dataset.type === 'line') {
                             return value.toFixed(1) + '%';
                         }
@@ -157,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         ticks: { 
                             color: 'white',
                             font: {
-                                size: 12
+                                size: () => isMobile() ? 8 : 12
                             },
                             callback: function(value) {
                                 return value + '%';
@@ -171,6 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     ...barChartConfig.options.plugins,
                     tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
                         callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
@@ -190,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         ...barChartConfig.options.plugins.datalabels,
                         formatter: (value, context) => {
+                            if (isMobile()) return null;
                             if (context.dataset.type === 'line') {
                                 return value.toFixed(1) + '%';
                             }
@@ -216,16 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Crear gráficos de barras
-    const projectsCtx = document.getElementById('residentialProjectsChart').getContext('2d');
-    createBarChart(projectsCtx, projects2023, projects2024, projectsVariation, 'N° Proyectos');
-
-    const unitsCtx = document.getElementById('availableUnitsChart').getContext('2d');
-    createBarChart(unitsCtx, units2023, units2024, unitsVariation, 'Unidades');
-
-    const absorptionCtx = document.getElementById('absorptionChart').getContext('2d');
-    createBarChart(absorptionCtx, absorption2023, absorption2024, absorptionVariation, 'Absorción');
-
     // Configuración común para los gráficos de pastel
     const pieChartConfig = {
         type: 'pie',
@@ -234,22 +234,23 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right',
+                    position: () => isMobile() ? 'bottom' : 'right',
                     labels: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => isMobile() ? 10 : 12
                         },
-                        padding: 20
+                        padding: () => isMobile() ? 10 : 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: 12
+                        size: () => isMobile() ? 0 : 12
                     },
                     formatter: (value, context) => {
+                        if (isMobile()) return null;
                         const label = context.chart.data.labels[context.dataIndex];
                         return `${label}: ${value}%`;
                     },
@@ -260,6 +261,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     textStrokeWidth: 1,
                     textShadowBlur: 5,
                     textShadowColor: 'black'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed.toFixed(1) + '%';
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
         }
@@ -279,12 +294,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Crear gráficos de pastel
+    // Crear gráficos
+    const projectsCtx = document.getElementById('residentialProjectsChart').getContext('2d');
+    const projectsChart = createBarChart(projectsCtx, projects2023, projects2024, projectsVariation, 'N° Proyectos');
+
+    const unitsCtx = document.getElementById('availableUnitsChart').getContext('2d');
+    const unitsChart = createBarChart(unitsCtx, units2023, units2024, unitsVariation, 'Unidades');
+
+    const absorptionCtx = document.getElementById('absorptionChart').getContext('2d');
+    const absorptionChart = createBarChart(absorptionCtx, absorption2023, absorption2024, absorptionVariation, 'Absorción');
+
     const projectsDistCtx = document.getElementById('projectsDistributionChart').getContext('2d');
-    createPieChart(projectsDistCtx, projectsDistribution, ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades']);
+    const projectsDistChart = createPieChart(projectsDistCtx, projectsDistribution, ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades']);
 
     const unitsDistCtx = document.getElementById('unitsDistributionChart').getContext('2d');
-    createPieChart(unitsDistCtx, unitsDistribution, ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades']);
+    const unitsDistChart = createPieChart(unitsDistCtx, unitsDistribution, ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades']);
+
+    // Función de redimensionamiento
+    function resizeCharts() {
+        const mobile = isMobile();
+        [projectsChart, unitsChart, absorptionChart, projectsDistChart, unitsDistChart].forEach(chart => {
+            if (chart.config.type === 'pie') {
+                chart.options.plugins.legend.position = mobile ? 'bottom' : 'right';
+            }
+            chart.options.plugins.datalabels.font.size = mobile ? 0 : 12;
+            chart.update();
+        });
+    }
+
+    // Llamar a resize después de que la página se haya cargado completamente y en el evento de cambio de tamaño de ventana
+    window.addEventListener('load', resizeCharts);
+    window.addEventListener('resize', resizeCharts);
 });
 
 // Verificar que el script se ha cargado correctamente
