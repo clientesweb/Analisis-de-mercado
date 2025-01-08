@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         maxRotation: 45,
                         minRotation: 45,
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: window.innerWidth < 640 ? 7 : window.innerWidth < 768 ? 8 : 12
                         }
                     }
                 },
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
+                            size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 10 : 12
                         }
                     }
                 }
@@ -49,9 +49,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
-                        }
-                    }
+                            size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 12
+                        },
+                        padding: window.innerWidth < 640 ? 8 : 12
+                    },
+                    display: window.innerWidth >= 480
                 },
                 tooltip: {
                     mode: 'index',
@@ -81,14 +83,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 9 : 11
+                        size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 11
                     },
                     display: function(context) {
+                        if (window.innerWidth < 480) {
+                            return context.datasetIndex === 2;
+                        }
                         return window.innerWidth >= 768 || context.datasetIndex === 2;
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
-                            return value.toFixed(2) + '%';
+                            return value.toFixed(1) + '%';
+                        }
+                        if (window.innerWidth < 480) {
+                            return '';
                         }
                         return window.innerWidth < 768 ? '' : value;
                     }
@@ -112,19 +120,20 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: window.innerWidth < 768 ? 'bottom' : 'right',
+                    position: window.innerWidth < 640 ? 'bottom' : window.innerWidth < 768 ? 'bottom' : 'right',
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 12
-                        }
+                            size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 12
+                        },
+                        padding: window.innerWidth < 640 ? 8 : 12
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 9 : 11
+                        size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 11
                     },
                     formatter: (value) => value + '%'
                 }
@@ -183,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             animation: {
-                duration: 0 // Deshabilitar animaciones para PDF
+                duration: 0 
             },
             plugins: {
                 ...config.options.plugins,
@@ -246,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             animation: {
-                duration: 0 // Deshabilitar animaciones para PDF
+                duration: 0 
             },
             plugins: {
                 ...config.options.plugins,
@@ -309,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             animation: {
-                duration: 0 // Deshabilitar animaciones para PDF
+                duration: 0 
             },
             plugins: {
                 ...config.options.plugins,
@@ -351,16 +360,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Adjust chart sizes
     function resizeCharts() {
+        const width = window.innerWidth;
         Chart.instances.forEach(chart => {
             if (chart.config.type === 'pie') {
-                chart.options.plugins.legend.position = window.innerWidth < 768 ? 'bottom' : 'right';
+                chart.options.plugins.legend.position = width < 640 ? 'bottom' : width < 768 ? 'bottom' : 'right';
             }
-            chart.options.plugins.legend.labels.font.size = window.innerWidth < 768 ? 10 : 12;
-            chart.options.plugins.datalabels.font.size = window.innerWidth < 768 ? 9 : 11;
+            
+            // Update font sizes
+            chart.options.plugins.legend.labels.font.size = width < 640 ? 9 : width < 768 ? 10 : 12;
+            chart.options.plugins.datalabels.font.size = width < 640 ? 8 : width < 768 ? 9 : 11;
+            
             if (chart.options.scales) {
-                chart.options.scales.x.ticks.font.size = window.innerWidth < 768 ? 8 : 12;
-                chart.options.scales.y.ticks.font.size = window.innerWidth < 768 ? 10 : 12;
+                chart.options.scales.x.ticks.font.size = width < 640 ? 7 : width < 768 ? 8 : 12;
+                chart.options.scales.y.ticks.font.size = width < 640 ? 8 : width < 768 ? 10 : 12;
             }
+            
+            // Show/hide legend based on screen size
+            chart.options.plugins.legend.display = width >= 480;
+            
             chart.update();
         });
     }
@@ -368,43 +385,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call resize after the page has fully loaded and on window resize
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
-});
-
-// PDF Generation
-document.getElementById('downloadPDF').addEventListener('click', function() {
-    const element = document.querySelector('.container');
-    const opt = {
-        margin: 10,
-        filename: 'informe-inmobiliario-ecuador.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            letterRendering: true
-        },
-        jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait' 
-        }
-    };
-
-    // Mostrar mensaje de carga
-    const loadingToast = document.createElement('div');
-    loadingToast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-lg border border-white/20 z-50';
-    loadingToast.textContent = 'Generando PDF...';
-    document.body.appendChild(loadingToast);
-
-    // Generar PDF
-    html2pdf().set(opt).from(element).save().then(() => {
-        loadingToast.textContent = 'PDF generado con éxito!';
-        setTimeout(() => loadingToast.remove(), 2000);
-    }).catch(err => {
-        loadingToast.textContent = 'Error al generar PDF';
-        setTimeout(() => loadingToast.remove(), 2000);
-        console.error('Error al generar PDF:', err);
-    });
 });
 
 // Verificar que el script se ha cargado correctamente
