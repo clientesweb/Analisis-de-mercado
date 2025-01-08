@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 60,
-                    right: 50,
-                    bottom: 20,
-                    left: 20
+                    top: 20,
+                    right: 25,
+                    bottom: 10,
+                    left: 15
                 }
             },
             scales: {
@@ -39,9 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         maxRotation: 45,
                         minRotation: 45,
                         font: {
-                            size: window.innerWidth < 768 ? 11 : 12
-                        },
-                        padding: 15
+                            size: window.innerWidth < 768 ? 10 : 12
+                        }
                     },
                     grid: {
                         display: false
@@ -51,9 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 11 : 12
+                            size: window.innerWidth < 768 ? 10 : 12
                         },
-                        padding: 10
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
@@ -64,68 +65,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: {
                     display: true,
                     position: 'top',
-                    align: 'center', 
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 12 : 13
+                            size: window.innerWidth < 768 ? 12 : 14
                         },
-                        padding: 25,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: 10,
-                        boxHeight: 10
+                        padding: 15
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 11 : 12
+                        size: window.innerWidth < 768 ? 10 : 11
                     },
                     padding: 6,
-                    display: true,
+                    display: function(context) {
+                        return context.datasetIndex !== 2 || context.dataIndex % 2 === 0;
+                    },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
                             return value.toFixed(1) + '%';
                         }
-                        return value;
+                        return value.toLocaleString();
                     },
-                    anchor: function(context) {
-                        const value = context.dataset.data[context.dataIndex];
-                        if (context.datasetIndex === 2) {
-                            return value >= 0 ? 'bottom' : 'top';
-                        }
-                        return context.datasetIndex === 0 ? 'end' : 'start';
-                    },
-                    align: function(context) {
-                        const value = context.dataset.data[context.dataIndex];
-                        if (context.datasetIndex === 2) {
-                            return value >= 0 ? 'bottom' : 'top';
-                        }
-                        return context.datasetIndex === 0 ? 'end' : 'start';
-                    },
-                    offset: function(context) {
-                        const isMobile = window.innerWidth < 768;
-                        if (context.datasetIndex === 2) {
-                            return context.dataset.data[context.dataIndex] >= 0 ? (isMobile ? 15 : 10) : (isMobile ? -15 : -10);
-                        }
-                        return context.datasetIndex === 0 ? (isMobile ? 20 : 15) : (isMobile ? -20 : -15);
-                    },
-                    rotation: 0,
-                    textAlign: 'center'
+                    anchor: 'end',
+                    align: 'end',
+                    offset: 0
                 }
             },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
-            },
-            barPercentage: window.innerWidth < 768 ? 0.8 : 0.7,
-            categoryPercentage: window.innerWidth < 768 ? 0.7 : 0.6
+            barPercentage: 0.8,
+            categoryPercentage: 0.7
         }
     };
 
@@ -239,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: projects2024,
                     backgroundColor: createGradient(projectsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'start',
-                        anchor: 'start'
+                        align: 'end',
+                        anchor: 'end'
                     }
                 },
                 {
@@ -254,8 +224,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: 'top',
-                        anchor: 'end'
+                        align: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        anchor: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        offset: function(context) {
+                            return context.dataIndex % 2 === 0 ? 5 : -5;
+                        }
                     }
                 }
             ]
@@ -268,6 +245,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     position: 'right',
                     ticks: { 
                         color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        },
                         callback: function(value) {
                             return value + '%';
                         }
@@ -301,8 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: units2024,
                     backgroundColor: createGradient(unitsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'start',
-                        anchor: 'start'
+                        align: 'end',
+                        anchor: 'end'
                     }
                 },
                 {
@@ -316,8 +296,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: 'top',
-                        anchor: 'end'
+                        align: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        anchor: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        offset: function(context) {
+                            return context.dataIndex % 2 === 0 ? 5 : -5;
+                        }
                     }
                 }
             ]
@@ -330,6 +317,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     position: 'right',
                     ticks: { 
                         color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        },
                         callback: function(value) {
                             return value + '%';
                         }
@@ -363,8 +353,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: absorption2024,
                     backgroundColor: createGradient(absorptionCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'start',
-                        anchor: 'start'
+                        align: 'end',
+                        anchor: 'end'
                     }
                 },
                 {
@@ -378,8 +368,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: 'top',
-                        anchor: 'end'
+                        align: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        anchor: function(context) {
+                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
+                        },
+                        offset: function(context) {
+                            return context.dataIndex % 2 === 0 ? 5 : -5;
+                        }
                     }
                 }
             ]
@@ -392,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     position: 'right',
                     ticks: { 
                         color: 'white',
+                        font: {
+                            size: window.innerWidth < 768 ? 10 : 12
+                        },
                         callback: function(value) {
                             return value + '%';
                         }
@@ -486,46 +486,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Chart.instances.forEach(chart => {
             if (chart.config.type === 'bar') {
-                // Center legends for bar charts
-                chart.options.plugins.legend.align = 'center';
-                chart.options.plugins.legend.position = 'top';
-                
-                // Adjust font sizes for better mobile visibility
                 const fontSize = isMobile ? {
                     legend: 12,
-                    datalabels: 11,
-                    ticks: 11
+                    datalabels: 10,
+                    ticks: 10
                 } : {
-                    legend: 13,
-                    datalabels: 12,
+                    legend: 14,
+                    datalabels: 11,
                     ticks: 12
                 };
 
-                // Update fonts
                 chart.options.plugins.legend.labels.font.size = fontSize.legend;
                 chart.options.plugins.datalabels.font.size = fontSize.datalabels;
                 chart.options.scales.x.ticks.font.size = fontSize.ticks;
                 chart.options.scales.y.ticks.font.size = fontSize.ticks;
 
-                // Adjust spacing
                 chart.options.layout.padding = isMobile ? {
-                    top: 60,
-                    right: 50,
-                    bottom: 20,
-                    left: 20
+                    top: 20,
+                    right: 25,
+                    bottom: 10,
+                    left: 15
                 } : {
-                    top: 50,
-                    right: 50,
-                    bottom: 20,
-                    left: 20
+                    top: 20,
+                    right: 25,
+                    bottom: 10,
+                    left: 15
                 };
 
-                // Adjust bar sizes
-                chart.options.barPercentage = isMobile ? 0.8 : 0.7;
-                chart.options.categoryPercentage = isMobile ? 0.7 : 0.6;
+                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
+                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
             }
             
-            // Update without animation
             chart.update('none');
         });
     }
