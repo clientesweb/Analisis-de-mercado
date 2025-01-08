@@ -18,8 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     Chart.register(ChartDataLabels);
 
-    // Chart configuration
-    const config = {
+    // Colores mejorados y consistentes
+    const colors = {
+        blue: 'rgba(59, 130, 246, 0.8)',
+        green: 'rgba(16, 185, 129, 0.8)',
+        yellow: 'rgba(245, 158, 11, 0.8)',
+        red: 'rgba(239, 68, 68, 0.8)',
+        purple: 'rgba(139, 92, 246, 0.8)',
+        gray: 'rgba(107, 114, 128, 0.8)'
+    };
+
+    // Función para crear degradados
+    function createGradient(ctx, color) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, color.replace('0.8', '0.4'));
+        return gradient;
+    }
+
+    // Configuración común para los gráficos de barras
+    const barChartConfig = {
         type: 'bar',
         options: {
             responsive: true,
@@ -36,13 +54,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 x: {
                     ticks: { 
                         color: 'white',
-                        maxRotation: 45,
-                        minRotation: 45,
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: 12
                         },
-                        autoSkip: false,
-                        maxTicksLimit: 11
+                        maxRotation: 45,
+                        minRotation: 45
                     },
                     grid: {
                         display: false
@@ -52,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: 12
                         },
                         callback: function(value) {
                             return value.toLocaleString();
@@ -70,20 +86,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 10 : 14
+                            size: 14
                         },
-                        padding: window.innerWidth < 768 ? 10 : 20
+                        padding: 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 8 : 10
-                    },
-                    padding: 4,
-                    display: function(context) {
-                        return context.datasetIndex !== 2 || (context.dataIndex % 2 === 0);
+                        size: 12
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -91,15 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         return value.toLocaleString();
                     },
-                    anchor: function(context) {
-                        return context.datasetIndex === 0 ? 'end' : 'start';
-                    },
-                    align: function(context) {
-                        return context.datasetIndex === 0 ? 'end' : 'start';
-                    },
-                    offset: function(context) {
-                        return context.datasetIndex === 0 ? -4 : 4;
-                    }
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 5
                 }
             },
             barPercentage: 0.8,
@@ -107,148 +113,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    const pieConfig = {
-        type: 'pie',
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'right',
-                    align: 'center',
-                    labels: { 
-                        color: 'white',
-                        font: {
-                            size: window.innerWidth < 768 ? 10 : 12
-                        },
-                        padding: 10,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: 8,
-                        boxHeight: 8
-                    }
-                },
-                datalabels: {
-                    color: 'white',
-                    font: {
-                        weight: 'bold',
-                        size: window.innerWidth < 768 ? 9 : 11
-                    },
-                    formatter: (value, ctx) => {
-                        return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%';
-                    },
-                    textAlign: 'center',
-                    anchor: 'end',
-                    align: 'end',
-                    offset: 5,
-                    display: true
-                }
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
-        }
-    };
-
-    // Función mejorada para crear degradados
-    function createGradient(ctx, colorStart, colorEnd) {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, colorStart);
-        gradient.addColorStop(0.5, colorEnd);
-        gradient.addColorStop(1, colorStart);
-        return gradient;
-    }
-
-    // Colores mejorados y consistentes
-    const colors = {
-        blue: {
-            start: 'rgba(59, 130, 246, 0.9)',
-            end: 'rgba(37, 99, 235, 0.7)'
-        },
-        green: {
-            start: 'rgba(16, 185, 129, 0.9)',
-            end: 'rgba(5, 150, 105, 0.7)'
-        },
-        yellow: {
-            start: 'rgba(245, 158, 11, 0.9)',
-            end: 'rgba(217, 119, 6, 0.7)'
-        },
-        red: {
-            start: 'rgba(239, 68, 68, 0.9)',
-            end: 'rgba(220, 38, 38, 0.7)'
-        },
-        purple: {
-            start: 'rgba(139, 92, 246, 0.9)',
-            end: 'rgba(124, 58, 237, 0.7)'
-        },
-        gray: {
-            start: 'rgba(107, 114, 128, 0.9)',
-            end: 'rgba(75, 85, 99, 0.7)'
-        }
-    };
-
     // Residential Projects Chart
     const projectsCtx = document.getElementById('residentialProjectsChart').getContext('2d');
     new Chart(projectsCtx, {
-        ...config,
+        ...barChartConfig,
         data: {
             labels: cities,
             datasets: [
                 {
                     label: 'N° Proyectos 2023',
                     data: projects2023,
-                    backgroundColor: createGradient(projectsCtx, colors.blue.start, colors.blue.end),
-                    datalabels: {
-                        align: 'end',
-                        anchor: 'end'
-                    }
+                    backgroundColor: createGradient(projectsCtx, colors.blue),
                 },
                 {
                     label: 'N° Proyectos 2024',
                     data: projects2024,
-                    backgroundColor: createGradient(projectsCtx, colors.green.start, colors.green.end),
-                    datalabels: {
-                        align: 'start',
-                        anchor: 'start'
-                    }
+                    backgroundColor: createGradient(projectsCtx, colors.green),
                 },
                 {
                     label: '% Variación',
                     data: projectsVariation,
                     type: 'line',
-                    borderColor: colors.yellow.start,
-                    backgroundColor: colors.yellow.end,
+                    borderColor: colors.yellow,
+                    backgroundColor: colors.yellow,
                     borderWidth: 2,
-                    pointBackgroundColor: colors.yellow.start,
+                    pointBackgroundColor: colors.yellow,
                     pointRadius: 4,
                     yAxisID: 'percentage',
-                    datalabels: {
-                        align: 'top',
-                        anchor: 'end',
-                        offset: 4
-                    }
                 }
             ]
         },
         options: {
-            ...config.options,
+            ...barChartConfig.options,
             scales: {
-                ...config.options.scales,
+                ...barChartConfig.options.scales,
                 percentage: {
                     position: 'right',
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -265,56 +169,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Available Units Chart
     const unitsCtx = document.getElementById('availableUnitsChart').getContext('2d');
     new Chart(unitsCtx, {
-        ...config,
+        ...barChartConfig,
         data: {
             labels: cities,
             datasets: [
                 {
                     label: 'Unidades 2023',
                     data: units2023,
-                    backgroundColor: createGradient(unitsCtx, colors.blue.start, colors.blue.end),
-                    datalabels: {
-                        align: 'end',
-                        anchor: 'end'
-                    }
+                    backgroundColor: createGradient(unitsCtx, colors.blue),
                 },
                 {
                     label: 'Unidades 2024',
                     data: units2024,
-                    backgroundColor: createGradient(unitsCtx, colors.green.start, colors.green.end),
-                    datalabels: {
-                        align: 'start',
-                        anchor: 'start'
-                    }
+                    backgroundColor: createGradient(unitsCtx, colors.green),
                 },
                 {
                     label: '% Variación',
                     data: unitsVariation,
                     type: 'line',
-                    borderColor: colors.yellow.start,
-                    backgroundColor: colors.yellow.end,
+                    borderColor: colors.yellow,
+                    backgroundColor: colors.yellow,
                     borderWidth: 2,
-                    pointBackgroundColor: colors.yellow.start,
+                    pointBackgroundColor: colors.yellow,
                     pointRadius: 4,
                     yAxisID: 'percentage',
-                    datalabels: {
-                        align: 'top',
-                        anchor: 'end',
-                        offset: 4
-                    }
                 }
             ]
         },
         options: {
-            ...config.options,
+            ...barChartConfig.options,
             scales: {
-                ...config.options.scales,
+                ...barChartConfig.options.scales,
                 percentage: {
                     position: 'right',
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -331,56 +222,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Absorption Chart
     const absorptionCtx = document.getElementById('absorptionChart').getContext('2d');
     new Chart(absorptionCtx, {
-        ...config,
+        ...barChartConfig,
         data: {
             labels: cities,
             datasets: [
                 {
                     label: 'Absorción 2023',
                     data: absorption2023,
-                    backgroundColor: createGradient(absorptionCtx, colors.blue.start, colors.blue.end),
-                    datalabels: {
-                        align: 'end',
-                        anchor: 'end'
-                    }
+                    backgroundColor: createGradient(absorptionCtx, colors.blue),
                 },
                 {
                     label: 'Absorción 2024',
                     data: absorption2024,
-                    backgroundColor: createGradient(absorptionCtx, colors.green.start, colors.green.end),
-                    datalabels: {
-                        align: 'start',
-                        anchor: 'start'
-                    }
+                    backgroundColor: createGradient(absorptionCtx, colors.green),
                 },
                 {
                     label: '% Variación',
                     data: absorptionVariation,
                     type: 'line',
-                    borderColor: colors.yellow.start,
-                    backgroundColor: colors.yellow.end,
+                    borderColor: colors.yellow,
+                    backgroundColor: colors.yellow,
                     borderWidth: 2,
-                    pointBackgroundColor: colors.yellow.start,
+                    pointBackgroundColor: colors.yellow,
                     pointRadius: 4,
                     yAxisID: 'percentage',
-                    datalabels: {
-                        align: 'top',
-                        anchor: 'end',
-                        offset: 4
-                    }
                 }
             ]
         },
         options: {
-            ...config.options,
+            ...barChartConfig.options,
             scales: {
-                ...config.options.scales,
+                ...barChartConfig.options.scales,
                 percentage: {
                     position: 'right',
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: window.innerWidth < 768 ? 8 : 12
+                            size: 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -394,21 +272,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Configuración común para los gráficos de pastel
+    const pieChartConfig = {
+        type: 'pie',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { 
+                        color: 'white',
+                        font: {
+                            size: 12
+                        },
+                        padding: 20
+                    }
+                },
+                datalabels: {
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: (value) => {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    };
+
     // Projects Distribution Chart
     const projectsDistCtx = document.getElementById('projectsDistributionChart').getContext('2d');
     new Chart(projectsDistCtx, {
-        ...pieConfig,
+        ...pieChartConfig,
         data: {
             labels: ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
             datasets: [{
                 data: projectsDistribution,
-                backgroundColor: [
-                    colors.blue.start,
-                    colors.green.start,
-                    colors.yellow.start,
-                    colors.red.start,
-                    colors.purple.start
-                ]
+                backgroundColor: [colors.blue, colors.green, colors.yellow, colors.red, colors.purple]
             }]
         }
     });
@@ -416,104 +319,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Units Distribution Chart
     const unitsDistCtx = document.getElementById('unitsDistributionChart').getContext('2d');
     new Chart(unitsDistCtx, {
-        ...pieConfig,
+        ...pieChartConfig,
         data: {
             labels: ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
             datasets: [{
                 data: unitsDistribution,
-                backgroundColor: [
-                    colors.blue.start,
-                    colors.green.start,
-                    colors.yellow.start,
-                    colors.red.start,
-                    colors.purple.start,
-                    colors.gray.start
-                ]
+                backgroundColor: [colors.blue, colors.green, colors.yellow, colors.red, colors.purple, colors.gray]
             }]
         }
     });
 
-    // Función de redimensionamiento mejorada
+    // Función de redimensionamiento
     function resizeCharts() {
-        const width = window.innerWidth;
-        const isMobile = width < 768;
-
         Chart.instances.forEach(chart => {
-            if (chart.config.type === 'bar') {
-                const fontSize = isMobile ? {
-                    legend: 10,
-                    datalabels: 8,
-                    ticks: 8
-                } : {
-                    legend: 14,
-                    datalabels: 10,
-                    ticks: 12
-                };
-
-                chart.options.plugins.legend.labels.font.size = fontSize.legend;
-                chart.options.plugins.datalabels.font.size = fontSize.datalabels;
-                chart.options.scales.x.ticks.font.size = fontSize.ticks;
-                chart.options.scales.y.ticks.font.size = fontSize.ticks;
-
-                chart.options.layout.padding = isMobile ? {
-                    top: 10,
-                    right: 10,
-                    bottom: 5,
-                    left: 5
-                } : {
-                    top: 20,
-                    right: 20,
-                    bottom: 10,
-                    left: 10
-                };
-
-                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
-                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
-
-                // Ajustar el aspectRatio basado en el ancho de la pantalla
-                if (width < 768) {
-                    chart.options.aspectRatio = 1; // Aspecto cuadrado para móviles
-                } else if (width < 1024) {
-                    chart.options.aspectRatio = 4/3; // Proporción 4:3 para tablets
-                } else {
-                    chart.options.aspectRatio = 16/9; // Proporción 16:9 para pantallas grandes
-                }
-            } else if (chart.config.type === 'pie') {
-                chart.options.plugins.legend.position = isMobile ? 'bottom' : 'right';
-                chart.options.plugins.legend.labels.font.size = isMobile ? 10 : 12;
-            }
-            
-            chart.update('none');
+            chart.resize();
         });
     }
 
-    // Call resize after the page has fully loaded and on window resize
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            resizeCharts();
-        }, 500);
-    });
-    window.addEventListener('resize', debounce(() => {
-        resizeCharts();
-    }, 250));
-    window.addEventListener('orientationchange', () => {
-        setTimeout(resizeCharts, 250);
-        setTimeout(resizeCharts, 500); // Llamada adicional para asegurar que se aplique después de la rotación
-    });
+    // Llamar a resize después de que la página se haya cargado completamente y en el evento de cambio de tamaño de ventana
+    window.addEventListener('load', resizeCharts);
+    window.addEventListener('resize', resizeCharts);
 });
-
-// Utility function for debouncing resize events
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
 
 // Verificar que el script se ha cargado correctamente
 console.log('Script cargado correctamente');
