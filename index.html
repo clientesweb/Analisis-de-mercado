@@ -110,6 +110,27 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Verificar que todas las dependencias se hayan cargado correctamente
+        window.addEventListener('load', function() {
+            console.log('Página cargada completamente');
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js cargado correctamente');
+            } else {
+                console.error('Chart.js no se ha cargado');
+            }
+            if (typeof html2canvas !== 'undefined') {
+                console.log('html2canvas cargado correctamente');
+            } else {
+                console.error('html2canvas no se ha cargado');
+            }
+            if (typeof window.jspdf !== 'undefined') {
+                console.log('jsPDF cargado correctamente');
+            } else {
+                console.error('jsPDF no se ha cargado');
+            }
+        });
+    </script>
 </body>
 </html>
 
