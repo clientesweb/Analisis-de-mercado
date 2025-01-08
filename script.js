@@ -469,6 +469,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 chart.options.barPercentage = isMobile ? 0.9 : 0.8;
                 chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
+
+                // Ajustar el aspectRatio basado en el ancho de la pantalla
+                if (width < 768) {
+                    chart.options.aspectRatio = 1; // Aspecto cuadrado para móviles
+                } else if (width < 1024) {
+                    chart.options.aspectRatio = 4/3; // Proporción 4:3 para tablets
+                } else {
+                    chart.options.aspectRatio = 16/9; // Proporción 16:9 para pantallas grandes
+                }
             } else if (chart.config.type === 'pie') {
                 chart.options.plugins.legend.position = isMobile ? 'bottom' : 'right';
                 chart.options.plugins.legend.labels.font.size = isMobile ? 10 : 12;
