@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 20,
+                    top: 30,
                     right: 25,
                     bottom: 10,
                     left: 15
@@ -70,18 +70,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         font: {
                             size: window.innerWidth < 768 ? 12 : 14
                         },
-                        padding: 15
+                        padding: 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 10 : 11
+                        size: window.innerWidth < 768 ? 9 : 11
                     },
                     padding: 6,
                     display: function(context) {
-                        return context.datasetIndex !== 2 || context.dataIndex % 2 === 0;
+                        return context.datasetIndex !== 2;
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -91,10 +91,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     anchor: 'end',
                     align: 'end',
-                    offset: 0
+                    offset: 4
                 }
             },
-            barPercentage: 0.8,
+            barPercentage: 0.6,
             categoryPercentage: 0.7
         }
     };
@@ -156,34 +156,35 @@ document.addEventListener('DOMContentLoaded', function() {
     function createGradient(ctx, colorStart, colorEnd) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, colorStart);
-        gradient.addColorStop(1, colorEnd);
+        gradient.addColorStop(0.5, colorEnd);
+        gradient.addColorStop(1, colorStart);
         return gradient;
     }
 
     // Colores mejorados y consistentes
     const colors = {
         blue: {
-            start: 'rgba(96, 165, 250, 0.95)',
-            end: 'rgba(96, 165, 250, 0.7)'
+            start: 'rgba(59, 130, 246, 0.9)',
+            end: 'rgba(37, 99, 235, 0.7)'
         },
         green: {
-            start: 'rgba(52, 211, 153, 0.95)',
-            end: 'rgba(52, 211, 153, 0.7)'
+            start: 'rgba(16, 185, 129, 0.9)',
+            end: 'rgba(5, 150, 105, 0.7)'
         },
         yellow: {
-            start: 'rgba(251, 191, 36, 0.95)',
-            end: 'rgba(251, 191, 36, 0.7)'
+            start: 'rgba(245, 158, 11, 0.9)',
+            end: 'rgba(217, 119, 6, 0.7)'
         },
         red: {
-            start: 'rgba(248, 113, 113, 0.95)',
-            end: 'rgba(248, 113, 113, 0.7)'
+            start: 'rgba(239, 68, 68, 0.9)',
+            end: 'rgba(220, 38, 38, 0.7)'
         },
         purple: {
-            start: 'rgba(167, 139, 250, 0.95)',
-            end: 'rgba(167, 139, 250, 0.7)'
+            start: 'rgba(139, 92, 246, 0.9)',
+            end: 'rgba(124, 58, 237, 0.7)'
         },
         gray: {
-            start: 'rgba(75, 85, 99, 0.95)',
+            start: 'rgba(107, 114, 128, 0.9)',
             end: 'rgba(75, 85, 99, 0.7)'
         }
     };
@@ -224,15 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        anchor: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        offset: function(context) {
-                            return context.dataIndex % 2 === 0 ? 5 : -5;
-                        }
+                        align: 'top',
+                        anchor: 'end',
+                        offset: 4
                     }
                 }
             ]
@@ -296,15 +291,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        anchor: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        offset: function(context) {
-                            return context.dataIndex % 2 === 0 ? 5 : -5;
-                        }
+                        align: 'top',
+                        anchor: 'end',
+                        offset: 4
                     }
                 }
             ]
@@ -368,15 +357,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
-                        align: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        anchor: function(context) {
-                            return context.dataIndex % 2 === 0 ? 'bottom' : 'top';
-                        },
-                        offset: function(context) {
-                            return context.dataIndex % 2 === 0 ? 5 : -5;
-                        }
+                        align: 'top',
+                        anchor: 'end',
+                        offset: 4
                     }
                 }
             ]
@@ -488,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (chart.config.type === 'bar') {
                 const fontSize = isMobile ? {
                     legend: 12,
-                    datalabels: 10,
+                    datalabels: 9,
                     ticks: 10
                 } : {
                     legend: 14,
@@ -503,17 +486,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 chart.options.layout.padding = isMobile ? {
                     top: 20,
-                    right: 25,
+                    right: 20,
                     bottom: 10,
-                    left: 15
+                    left: 10
                 } : {
-                    top: 20,
+                    top: 30,
                     right: 25,
                     bottom: 10,
                     left: 15
                 };
 
-                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
+                chart.options.barPercentage = isMobile ? 0.7 : 0.6;
                 chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
             }
             
