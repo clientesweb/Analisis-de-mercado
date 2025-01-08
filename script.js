@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: window.innerWidth < 768 ? 8 : 11
+                        size: window.innerWidth < 768 ? 8 : 10
                     },
                     padding: 4,
                     display: function(context) {
-                        return context.datasetIndex !== 2 && (window.innerWidth >= 768 || context.dataIndex % 2 === 0);
+                        return context.datasetIndex !== 2;
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -91,9 +91,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         return value.toLocaleString();
                     },
-                    anchor: 'end',
-                    align: 'end',
-                    offset: 4
+                    anchor: function(context) {
+                        return context.datasetIndex === 0 ? 'end' : 'start';
+                    },
+                    align: function(context) {
+                        return context.datasetIndex === 0 ? 'end' : 'start';
+                    },
+                    offset: function(context) {
+                        return context.datasetIndex === 0 ? -4 : 4;
+                    }
                 }
             },
             barPercentage: window.innerWidth < 768 ? 0.8 : 0.6,
@@ -229,7 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4
+                        offset: 4,
+                        display: true,
+                        formatter: (value) => value.toFixed(1) + '%'
                     }
                 }
             ]
@@ -295,7 +303,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4
+                        offset: 4,
+                        display: true,
+                        formatter: (value) => value.toFixed(1) + '%'
                     }
                 }
             ]
@@ -361,7 +371,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     datalabels: {
                         align: 'top',
                         anchor: 'end',
-                        offset: 4
+                        offset: 4,
+                        display: true,
+                        formatter: (value) => value.toFixed(1) + '%'
                     }
                 }
             ]
@@ -477,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: 8
                 } : {
                     legend: 14,
-                    datalabels: 11,
+                    datalabels: 10,
                     ticks: 12
                 };
 
@@ -507,9 +519,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function adjustBarSpacing() {
+        const width = window.innerWidth;
+        const isMobile = width < 768;
+
+        Chart.instances.forEach(chart => {
+            if (chart.config.type === 'bar') {
+                chart.options.barPercentage = isMobile ? 0.9 : 0.8;
+                chart.options.categoryPercentage = isMobile ? 0.8 : 0.7;
+                chart.update('none');
+            }
+        });
+    }
+
     // Call resize after the page has fully loaded and on window resize
-    window.addEventListener('load', () => setTimeout(resizeCharts, 500));
-    window.addEventListener('resize', debounce(resizeCharts, 250));
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            resizeCharts();
+            adjustBarSpacing();
+        }, 500);
+    });
+    window.addEventListener('resize', debounce(() => {
+        resizeCharts();
+        adjustBarSpacing();
+    }, 250));
     window.addEventListener('orientationchange', () => {
         setTimeout(resizeCharts, 250);
         setTimeout(resizeCharts, 500); // Llamada adicional para asegurar que se aplique después de la rotación
