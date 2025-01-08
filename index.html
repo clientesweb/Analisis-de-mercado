@@ -6,9 +6,24 @@
     <title>Informe Inmobiliario Ecuador</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .chart-container {
+                height: 80vh !important;
+                width: 100% !important;
+                page-break-inside: avoid;
+            }
+        }
         .chart-container {
             position: relative;
             height: 400px;
@@ -24,12 +39,12 @@
 </head>
 <body class="bg-gradient-to-b from-red-600 via-red-800 to-black min-h-screen text-white">
     <div class="container mx-auto p-4 sm:p-8 relative">
-        <!-- Download PDF Button -->
-        <button id="pdfButton" class="fixed top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-lg flex items-center gap-2 z-10 transition duration-300 ease-in-out">
+        <!-- Print Button -->
+        <button id="printButton" class="no-print fixed top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-lg flex items-center gap-2 z-10 transition duration-300 ease-in-out">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
             </svg>
-            <span id="pdfButtonText">Descargar PDF</span>
+            <span>Imprimir Informe</span>
         </button>
 
         <!-- Logo -->
@@ -62,7 +77,7 @@
             <!-- Charts -->
             <section class="space-y-8 sm:space-y-12">
                 <!-- Residential Projects Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15">
+                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
                     <h3 class="text-lg sm:text-xl font-bold mb-4">Número Proyectos Residenciales (Casas –Depts) Periodo Comparativo 2023 –2024</h3>
                     <div class="chart-container">
                         <canvas id="residentialProjectsChart"></canvas>
@@ -70,7 +85,7 @@
                 </div>
 
                 <!-- Available Units Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15">
+                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
                     <h3 class="text-lg sm:text-xl font-bold mb-4">Unidades Disponibles (Casas –Depts) 11 Principales Ciudades</h3>
                     <div class="chart-container">
                         <canvas id="availableUnitsChart"></canvas>
@@ -78,7 +93,7 @@
                 </div>
 
                 <!-- Absorption Chart -->
-                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15">
+                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 transition duration-300 ease-in-out hover:bg-white/15 page-break">
                     <h3 class="text-lg sm:text-xl font-bold mb-4">Absorción Promedio Mes Proyectos Residenciales</h3>
                     <div class="chart-container">
                         <canvas id="absorptionChart"></canvas>
@@ -86,7 +101,7 @@
                 </div>
 
                 <!-- Distribution Charts -->
-                <div class="flex flex-col lg:flex-row gap-8">
+                <div class="flex flex-col lg:flex-row gap-8 page-break">
                     <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-4 sm:p-6 w-full lg:w-1/2 transition duration-300 ease-in-out hover:bg-white/15">
                         <h3 class="text-lg sm:text-xl font-bold mb-4">Peso Porcentual Oferta por Ciudad</h3>
                         <div class="chart-container">
@@ -110,27 +125,6 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-        // Verificar que todas las dependencias se hayan cargado correctamente
-        window.addEventListener('load', function() {
-            console.log('Página cargada completamente');
-            if (typeof Chart !== 'undefined') {
-                console.log('Chart.js cargado correctamente');
-            } else {
-                console.error('Chart.js no se ha cargado');
-            }
-            if (typeof html2canvas !== 'undefined') {
-                console.log('html2canvas cargado correctamente');
-            } else {
-                console.error('html2canvas no se ha cargado');
-            }
-            if (typeof window.jspdf !== 'undefined') {
-                console.log('jsPDF cargado correctamente');
-            } else {
-                console.error('jsPDF no se ha cargado');
-            }
-        });
-    </script>
 </body>
 </html>
 
