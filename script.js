@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 20,
+                    top: 30,
                     right: 20,
                     bottom: 10,
                     left: 10
@@ -95,19 +95,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: () => window.innerWidth < 640 ? 8 : 12
+                        size: () => window.innerWidth < 640 ? 8 : 10
                     },
                     formatter: (value, context) => {
-                        if (context.datasetIndex === 2) {
+                        if (context.dataset.type === 'line') {
                             return value.toFixed(1) + '%';
                         }
                         return value.toLocaleString();
                     },
-                    anchor: 'end',
-                    align: 'top',
-                    offset: 5,
+                    anchor: (context) => context.dataset.type === 'line' ? 'center' : 'end',
+                    align: (context) => context.dataset.type === 'line' ? 'bottom' : 'top',
+                    offset: (context) => context.dataset.type === 'line' ? 0 : 4,
                     display: (context) => {
-                        return window.innerWidth >= 640 || context.datasetIndex !== 2;
+                        // Mostrar etiquetas solo para barras en móviles
+                        if (window.innerWidth < 640) {
+                            return context.dataset.type !== 'line';
+                        }
+                        return true;
                     }
                 }
             },
@@ -116,164 +120,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Residential Projects Chart
+    // Función para crear gráficos de barras
+    function createBarChart(ctx, data2023, data2024, variation, title) {
+        return new Chart(ctx, {
+            ...barChartConfig,
+            data: {
+                labels: cities,
+                datasets: [
+                    {
+                        label: title + ' 2023',
+                        data: data2023,
+                        backgroundColor: createGradient(ctx, colors.blue),
+                    },
+                    {
+                        label: title + ' 2024',
+                        data: data2024,
+                        backgroundColor: createGradient(ctx, colors.green),
+                    },
+                    {
+                        label: '% Variación',
+                        data: variation,
+                        type: 'line',
+                        borderColor: colors.yellow,
+                        backgroundColor: colors.yellow,
+                        borderWidth: 2,
+                        pointBackgroundColor: colors.yellow,
+                        pointRadius: 4,
+                        yAxisID: 'percentage',
+                    }
+                ]
+            },
+            options: {
+                ...barChartConfig.options,
+                scales: {
+                    ...barChartConfig.options.scales,
+                    percentage: {
+                        position: 'right',
+                        ticks: { 
+                            color: 'white',
+                            font: {
+                                size: () => window.innerWidth < 640 ? 8 : 12
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    ...barChartConfig.options.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toLocaleString();
+                                }
+                                if (context.dataset.type === 'line') {
+                                    label += '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Crear gráficos de barras
     const projectsCtx = document.getElementById('residentialProjectsChart').getContext('2d');
-    new Chart(projectsCtx, {
-        ...barChartConfig,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'N° Proyectos 2023',
-                    data: projects2023,
-                    backgroundColor: createGradient(projectsCtx, colors.blue),
-                },
-                {
-                    label: 'N° Proyectos 2024',
-                    data: projects2024,
-                    backgroundColor: createGradient(projectsCtx, colors.green),
-                },
-                {
-                    label: '% Variación',
-                    data: projectsVariation,
-                    type: 'line',
-                    borderColor: colors.yellow,
-                    backgroundColor: colors.yellow,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.yellow,
-                    pointRadius: 4,
-                    yAxisID: 'percentage',
-                }
-            ]
-        },
-        options: {
-            ...barChartConfig.options,
-            scales: {
-                ...barChartConfig.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { 
-                        color: 'white',
-                        font: {
-                            size: () => window.innerWidth < 640 ? 8 : 12
-                        },
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
+    createBarChart(projectsCtx, projects2023, projects2024, projectsVariation, 'N° Proyectos');
 
-    // Available Units Chart
     const unitsCtx = document.getElementById('availableUnitsChart').getContext('2d');
-    new Chart(unitsCtx, {
-        ...barChartConfig,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'Unidades 2023',
-                    data: units2023,
-                    backgroundColor: createGradient(unitsCtx, colors.blue),
-                },
-                {
-                    label: 'Unidades 2024',
-                    data: units2024,
-                    backgroundColor: createGradient(unitsCtx, colors.green),
-                },
-                {
-                    label: '% Variación',
-                    data: unitsVariation,
-                    type: 'line',
-                    borderColor: colors.yellow,
-                    backgroundColor: colors.yellow,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.yellow,
-                    pointRadius: 4,
-                    yAxisID: 'percentage',
-                }
-            ]
-        },
-        options: {
-            ...barChartConfig.options,
-            scales: {
-                ...barChartConfig.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { 
-                        color: 'white',
-                        font: {
-                            size: () => window.innerWidth < 640 ? 8 : 12
-                        },
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
+    createBarChart(unitsCtx, units2023, units2024, unitsVariation, 'Unidades');
 
-    // Absorption Chart
     const absorptionCtx = document.getElementById('absorptionChart').getContext('2d');
-    new Chart(absorptionCtx, {
-        ...barChartConfig,
-        data: {
-            labels: cities,
-            datasets: [
-                {
-                    label: 'Absorción 2023',
-                    data: absorption2023,
-                    backgroundColor: createGradient(absorptionCtx, colors.blue),
-                },
-                {
-                    label: 'Absorción 2024',
-                    data: absorption2024,
-                    backgroundColor: createGradient(absorptionCtx, colors.green),
-                },
-                {
-                    label: '% Variación',
-                    data: absorptionVariation,
-                    type: 'line',
-                    borderColor: colors.yellow,
-                    backgroundColor: colors.yellow,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.yellow,
-                    pointRadius: 4,
-                    yAxisID: 'percentage',
-                }
-            ]
-        },
-        options: {
-            ...barChartConfig.options,
-            scales: {
-                ...barChartConfig.options.scales,
-                percentage: {
-                    position: 'right',
-                    ticks: { 
-                        color: 'white',
-                        font: {
-                            size: () => window.innerWidth < 640 ? 8 : 12
-                        },
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
+    createBarChart(absorptionCtx, absorption2023, absorption2024, absorptionVariation, 'Absorción');
 
     // Configuración común para los gráficos de pastel
     const pieChartConfig = {
@@ -301,47 +230,53 @@ document.addEventListener('DOMContentLoaded', function() {
                     formatter: (value) => {
                         return value + '%';
                     },
-                    display: (context) => {
-                        return window.innerWidth >= 640;
-                    }
+                    anchor: 'end',
+                    align: 'start',
+                    offset: 10,
+                    display: 'auto',
+                    textStrokeColor: 'black',
+                    textStrokeWidth: 1,
+                    textShadowBlur: 5,
+                    textShadowColor: 'black'
                 }
             }
         }
     };
 
-    // Projects Distribution Chart
-    const projectsDistCtx = document.getElementById('projectsDistributionChart').getContext('2d');
-    new Chart(projectsDistCtx, {
-        ...pieChartConfig,
-        data: {
-            labels: ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
-            datasets: [{
-                data: projectsDistribution,
-                backgroundColor: [colors.blue, colors.green, colors.yellow, colors.red, colors.purple]
-            }]
-        }
-    });
+    // Función para crear gráficos de pastel
+    function createPieChart(ctx, data, labels) {
+        return new Chart(ctx, {
+            ...pieChartConfig,
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: Object.values(colors)
+                }]
+            }
+        });
+    }
 
-    // Units Distribution Chart
+    // Crear gráficos de pastel
+    const projectsDistCtx = document.getElementById('projectsDistributionChart').getContext('2d');
+    createPieChart(projectsDistCtx, projectsDistribution, ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades']);
+
     const unitsDistCtx = document.getElementById('unitsDistributionChart').getContext('2d');
-    new Chart(unitsDistCtx, {
-        ...pieChartConfig,
-        data: {
-            labels: ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
-            datasets: [{
-                data: unitsDistribution,
-                backgroundColor: [colors.blue, colors.green, colors.yellow, colors.red, colors.purple, colors.gray]
-            }]
-        }
-    });
+    createPieChart(unitsDistCtx, unitsDistribution, ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades']);
 
     // Función de redimensionamiento
     function resizeCharts() {
         Chart.instances.forEach(chart => {
-            chart.options.plugins.legend.position = window.innerWidth < 640 ? 'bottom' : 'top';
-            chart.options.plugins.datalabels.display = (context) => {
-                return window.innerWidth >= 640 || context.datasetIndex !== 2;
-            };
+            if (chart.config.type === 'pie') {
+                chart.options.plugins.legend.position = window.innerWidth < 640 ? 'bottom' : 'right';
+            } else {
+                chart.options.plugins.datalabels.display = (context) => {
+                    if (window.innerWidth < 640) {
+                        return context.dataset.type !== 'line';
+                    }
+                    return true;
+                };
+            }
             chart.update();
         });
     }
