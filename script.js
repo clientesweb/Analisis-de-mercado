@@ -254,21 +254,28 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
 
-    // Print functionality
-    document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });
-
     // Función para generar el PDF
     async function generatePDFWithCharts() {
         const button = document.getElementById('pdfButton');
         const buttonText = document.getElementById('pdfButtonText');
         
         try {
+            console.log('Iniciando generación de PDF...');
             button.disabled = true;
             buttonText.textContent = 'Generando PDF...';
             
+            // Verificar que jsPDF esté disponible
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF no está cargado correctamente');
+            }
+
+            // Verificar que html2canvas esté disponible
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('html2canvas no está cargado correctamente');
+            }
+
             await ensureChartsRendered();
+            console.log('Gráficos renderizados correctamente');
             
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
@@ -293,7 +300,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para añadir un gráfico
             const addChart = async (chartId, title) => {
+                console.log(`Añadiendo gráfico: ${chartId}`);
                 const chart = document.getElementById(chartId);
+                if (!chart) {
+                    throw new Error(`No se encontró el elemento con id ${chartId}`);
+                }
                 const chartImage = await html2canvas(chart);
                 const imgData = chartImage.toDataURL('image/png');
                 const imgWidth = pageWidth - 2 * margin;
@@ -305,21 +316,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 addText(title, 14, true);
                 pdf.addImage(imgData, 'PNG', margin, 30, imgWidth, imgHeight);
+                console.log(`Gráfico ${chartId} añadido correctamente`);
             };
 
             // Añadir logo
+            console.log('Añadiendo logo...');
             const logo = document.querySelector('header img');
+            if (!logo) {
+                throw new Error('No se encontró el logo');
+            }
             const logoImage = await html2canvas(logo);
             const logoData = logoImage.toDataURL('image/png');
             pdf.addImage(logoData, 'PNG', (pageWidth - 60) / 2, 10, 60, 60 * logoImage.height / logoImage.width);
+            console.log('Logo añadido correctamente');
 
             // Añadir título y subtítulos
+            console.log('Añadiendo títulos...');
             let yOffset = 80;
             yOffset += addText('COMPORTAMIENTO OFERTA RESIDENCIAL ORGANIZADA', 16, true);
             yOffset += addText('11 PRINCIPALES CIUDADES DEL ECUADOR', 14);
             yOffset += addText('PERIODO COMPARATIVO 2023 - 2024', 14);
 
             // Añadir objetivo
+            console.log('Añadiendo objetivo...');
             yOffset += 10;
             yOffset += addText('OBJETIVO DEL ARTÍCULO', 14, true);
             const objectiveText = 'Medir el nivel comercial y constructivo de la oferta residencial (casas –departamentos) últimos dos años factor determinante que permite conocer la salud inmobiliaria de cada una de las ciudades analizadas esto resultado de los niveles de absorción promedio. Información actualizada puntualmente por ciudad y proyecto en el último semestre de cada año la cual en la actualidad es una herramienta básica e indispensable para el sector de la construcción, financiero y comercial del país.';
@@ -333,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
             await addChart('unitsDistributionChart', 'Peso Porcentual Unidades Disponibles');
 
             // Añadir pie de página
+            console.log('Añadiendo pie de página...');
             const totalPages = pdf.internal.getNumberOfPages();
             for (let i = 1; i <= totalPages; i++) {
                 pdf.setPage(i);
@@ -341,6 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Guardar PDF
+            console.log('Guardando PDF...');
             pdf.save('informe_inmobiliario_ecuador.pdf');
             
             buttonText.textContent = 'PDF Generado';
@@ -348,9 +369,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonText.textContent = 'Descargar PDF';
                 button.disabled = false;
             }, 3000);
+            console.log('PDF generado y guardado correctamente');
         } catch (err) {
             console.error('Error generating PDF:', err);
             buttonText.textContent = 'Error al generar PDF';
+            alert(`Error al generar PDF: ${err.message}`);
             setTimeout(() => {
                 buttonText.textContent = 'Descargar PDF';
                 button.disabled = false;
@@ -372,6 +395,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Agregar evento de clic al botón de descarga de PDF
-    document.getElementById('pdfButton').addEventListener('click', generatePDFWithCharts);
+    const pdfButton = document.getElementById('pdfButton');
+    if (pdfButton) {
+        pdfButton.addEventListener('click', generatePDFWithCharts);
+        console.log('Evento de clic añadido al botón de PDF');
+    } else {
+        console.error('No se encontró el botón de PDF');
+    }
 });
+
+// Verificar que el script se ha cargado correctamente
+console.log('Script cargado correctamente');
 
