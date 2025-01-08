@@ -232,6 +232,12 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 20,
+                    bottom: 20
+                }
+            },
             plugins: {
                 legend: {
                     position: () => isMobile() ? 'bottom' : 'right',
@@ -240,29 +246,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         font: {
                             size: () => isMobile() ? 10 : 12
                         },
-                        padding: () => isMobile() ? 10 : 20
+                        padding: () => isMobile() ? 10 : 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: () => isMobile() ? 0 : 12
+                        size: () => isMobile() ? 0 : 14
                     },
                     formatter: (value, context) => {
                         if (isMobile()) return null;
-                        const label = context.chart.data.labels[context.dataIndex];
-                        return `${label}: ${value}%`;
+                        return `${value}%`;
                     },
-                    anchor: 'end',
-                    align: 'start',
-                    offset: 10,
-                    textStrokeColor: 'black',
-                    textStrokeWidth: 1,
+                    anchor: 'center',
+                    align: 'center',
+                    offset: 0,
+                    textStrokeColor: 'rgba(0, 0, 0, 0.5)',
+                    textStrokeWidth: 2,
                     textShadowBlur: 5,
                     textShadowColor: 'black'
                 },
                 tooltip: {
+                    enabled: true,
                     callbacks: {
                         label: function(context) {
                             let label = context.label || '';
@@ -270,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 label += ': ';
                             }
                             if (context.parsed !== null) {
-                                label += context.parsed.toFixed(1) + '%';
+                                label += context.parsed + '%';
                             }
                             return label;
                         }
@@ -281,17 +289,68 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Función para crear gráficos de pastel
-    function createPieChart(ctx, data, labels) {
-        return new Chart(ctx, {
+    function createPieChart(ctx, data, labels, totals) {
+        const chart = new Chart(ctx, {
             ...pieChartConfig,
             data: {
                 labels: labels,
                 datasets: [{
                     data: data,
-                    backgroundColor: Object.values(colors)
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)', // Azul
+                        'rgba(16, 185, 129, 0.8)', // Verde
+                        'rgba(245, 158, 11, 0.8)', // Amarillo
+                        'rgba(239, 68, 68, 0.8)',  // Rojo
+                        'rgba(139, 92, 246, 0.8)', // Morado
+                        'rgba(107, 114, 128, 0.8)' // Gris
+                    ]
                 }]
+            },
+            options: {
+                ...pieChartConfig.options,
+                layout: {
+                    padding: {
+                        top: 60, // Espacio para los totales
+                        bottom: 20
+                    }
+                }
             }
         });
+
+        // Agregar los totales encima del gráfico
+        const container = ctx.canvas.parentNode;
+        const statsDiv = document.createElement('div');
+        statsDiv.className = 'stats-container';
+        statsDiv.style.position = 'absolute';
+        statsDiv.style.top = '0';
+        statsDiv.style.left = '0';
+        statsDiv.style.width = '100%';
+        statsDiv.style.display = 'grid';
+        statsDiv.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        statsDiv.style.gap = '1rem';
+        statsDiv.style.padding = '1rem';
+        statsDiv.style.color = 'white';
+        statsDiv.style.textAlign = 'center';
+
+        statsDiv.innerHTML = `
+            <div>
+                <div style="font-size: 0.875rem; opacity: 0.8">Total 2023</div>
+                <div style="font-size: 1.25rem; font-weight: bold">${totals.y2023}</div>
+            </div>
+            <div>
+                <div style="font-size: 0.875rem; opacity: 0.8">Total 2024</div>
+                <div style="font-size: 1.25rem; font-weight: bold">${totals.y2024}</div>
+            </div>
+            <div>
+                <div style="font-size: 0.875rem; opacity: 0.8">Variación</div>
+                <div style="font-size: 1.25rem; font-weight: bold">${totals.variation}%</div>
+            </div>
+        `;
+
+        container.style.position = 'relative';
+        container.insertBefore(statsDiv, ctx.canvas);
+
+        return chart;
     }
 
     // Crear gráficos
@@ -305,10 +364,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const absorptionChart = createBarChart(absorptionCtx, absorption2023, absorption2024, absorptionVariation, 'Absorción');
 
     const projectsDistCtx = document.getElementById('projectsDistributionChart').getContext('2d');
-    const projectsDistChart = createPieChart(projectsDistCtx, projectsDistribution, ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades']);
+    const projectsDistChart = createPieChart(
+        projectsDistCtx, 
+        projectsDistribution, 
+        ['Quito', 'Guayaquil', 'Cuenca', 'Ambato', 'Otras Ciudades'],
+        { y2023: 989, y2024: 1013, variation: 2.43 }
+    );
 
     const unitsDistCtx = document.getElementById('unitsDistributionChart').getContext('2d');
-    const unitsDistChart = createPieChart(unitsDistCtx, unitsDistribution, ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades']);
+    const unitsDistChart = createPieChart(
+        unitsDistCtx, 
+        unitsDistribution, 
+        ['Guayaquil', 'Quito', 'Manta', 'Machala', 'Cuenca', 'Otras Ciudades'],
+        { y2023: 989, y2024: 1013, variation: 2.43 }
+    );
 
     // Función de redimensionamiento
     function resizeCharts() {
