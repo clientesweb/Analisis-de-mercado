@@ -265,15 +265,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Ocultar el botón de impresión
         button.style.display = 'none';
 
-        // Imprimir después de un breve retraso para asegurar que los estilos se apliquen
-        setTimeout(() => {
-            window.print();
-            
-            // Restaurar el botón después de imprimir
-            button.style.display = '';
-            button.disabled = false;
-            buttonText.textContent = 'Imprimir Informe';
-        }, 1000);
+        // Asegurar que los gráficos estén completamente renderizados
+        Promise.all(Chart.instances.map(chart => chart.render())).then(() => {
+            // Imprimir después de un breve retraso para asegurar que los estilos se apliquen
+            setTimeout(() => {
+                window.print();
+                
+                // Restaurar el botón después de imprimir
+                button.style.display = '';
+                button.disabled = false;
+                buttonText.textContent = 'Imprimir Informe';
+            }, 1000);
+        });
     }
 
     // Agregar evento de clic al botón de impresión
