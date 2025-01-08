@@ -262,20 +262,21 @@ async function generatePDFWithCharts() {
         await ensureChartsRendered();
         
         const element = document.body;
-        const opt = {
-            margin: 10,
-            filename: 'informe_inmobiliario_ecuador.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: true,
-                letterRendering: true
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        await html2pdf().set(opt).from(element).save();
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            logging: true,
+            letterRendering: true
+        });
+        
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('informe_inmobiliario_ecuador.pdf');
         
         buttonText.textContent = 'PDF Generado';
         setTimeout(() => {
@@ -310,5 +311,14 @@ window.addEventListener('resize', function() {
     Chart.instances.forEach(chart => {
         chart.resize();
     });
+});
+
+// Call resize after the page has fully loaded
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        Chart.instances.forEach(chart => {
+            chart.resize();
+        });
+    }, 500);
 });
 
