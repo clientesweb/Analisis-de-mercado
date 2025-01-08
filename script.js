@@ -250,7 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 
-// Function to generate PDF
 async function generatePDFWithCharts() {
     const button = document.getElementById('pdfButton');
     const buttonText = document.getElementById('pdfButtonText');
@@ -312,7 +311,6 @@ async function generatePDFWithCharts() {
     }
 }
 
-// Function to ensure charts are fully rendered before PDF generation
 function ensureChartsRendered() {
     return new Promise((resolve) => {
         const checkCharts = setInterval(() => {
