@@ -11,6 +11,12 @@
             body {
                 width: 210mm;
                 height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 100% !important;
+                max-width: none !important;
             }
             .no-print {
                 display: none !important;
@@ -22,6 +28,19 @@
                 height: 80vh !important;
                 width: 100% !important;
                 page-break-inside: avoid;
+            }
+            .bg-gradient-to-b {
+                background: linear-gradient(to bottom, #dc2626 0%, #991b1b 50%, #000000 100%) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .backdrop-blur-xl {
+                backdrop-filter: none !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
             }
         }
         .chart-container {
