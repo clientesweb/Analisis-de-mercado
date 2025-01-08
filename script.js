@@ -417,6 +417,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Llamar a resize después de que la página se haya cargado completamente y en el evento de cambio de tamaño de ventana
     window.addEventListener('load', resizeCharts);
     window.addEventListener('resize', resizeCharts);
+
+    // Función para manejar la descarga del PDF
+    function handleDownloadPDF() {
+        // Aquí iría la lógica para generar y descargar el PDF
+        console.log('Descargando PDF...');
+        alert('La funcionalidad de descarga del PDF será implementada próximamente.');
+    }
+
+    // Agregar evento de clic al botón de descarga
+    const downloadButton = document.getElementById('downloadPDF');
+    if (downloadButton) {
+        downloadButton.addEventListener('click', handleDownloadPDF);
+    }
 });
 
 // Verificar que el script se ha cargado correctamente
