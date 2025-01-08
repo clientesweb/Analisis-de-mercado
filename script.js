@@ -26,10 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 30,
-                    right: 30,
+                    top: 40,
+                    right: 35,
                     bottom: 10,
-                    left: 10
+                    left: 15
                 }
             },
             scales: {
@@ -61,18 +61,20 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             plugins: {
                 legend: {
+                    display: true,
+                    position: window.innerWidth < 640 ? 'bottom' : 'top',
+                    align: 'start',
                     labels: { 
                         color: 'white',
                         font: {
                             size: window.innerWidth < 640 ? 9 : window.innerWidth < 768 ? 10 : 12
                         },
-                        padding: window.innerWidth < 640 ? 8 : 12,
+                        padding: window.innerWidth < 640 ? 10 : 15,
                         usePointStyle: true,
-                        pointStyle: 'circle'
-                    },
-                    display: window.innerWidth >= 480,
-                    position: 'top',
-                    align: 'center'
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                        boxHeight: 8
+                    }
                 },
                 tooltip: {
                     mode: 'index',
@@ -97,7 +99,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     bodyColor: 'white',
                     borderColor: 'rgba(255, 255, 255, 0.2)',
                     borderWidth: 1,
-                    padding: 10
+                    padding: 10,
+                    titleFont: {
+                        size: window.innerWidth < 640 ? 10 : 12
+                    },
+                    bodyFont: {
+                        size: window.innerWidth < 640 ? 9 : 11
+                    }
                 },
                 datalabels: {
                     color: 'white',
@@ -122,21 +130,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (context.datasetIndex === 2) {
                             return value >= 0 ? 'bottom' : 'top';
                         }
-                        return 'end';
+                        return context.datasetIndex === 0 ? 'end' : 'start';
                     },
                     align: function(context) {
                         const value = context.dataset.data[context.dataIndex];
                         if (context.datasetIndex === 2) {
                             return value >= 0 ? 'bottom' : 'top';
                         }
-                        return 'end';
+                        return context.datasetIndex === 0 ? 'end' : 'start';
                     },
                     offset: function(context) {
                         return context.datasetIndex === 2 ? 8 : 4;
                     },
                     rotation: function(context) {
-                        if (context.datasetIndex !== 2) {
-                            return window.innerWidth < 768 ? -45 : 0;
+                        if (context.datasetIndex !== 2 && window.innerWidth < 768) {
+                            return -45;
                         }
                         return 0;
                     }
@@ -171,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     position: window.innerWidth < 640 ? 'bottom' : window.innerWidth < 768 ? 'bottom' : 'right',
+                    align: 'center',
                     labels: { 
                         color: 'white',
                         font: {
@@ -178,7 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         padding: window.innerWidth < 640 ? 8 : 12,
                         usePointStyle: true,
-                        pointStyle: 'circle'
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                        boxHeight: 8
                     }
                 },
                 datalabels: {
@@ -187,7 +198,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         weight: 'bold',
                         size: window.innerWidth < 640 ? 8 : window.innerWidth < 768 ? 9 : 11
                     },
-                    formatter: (value) => value + '%',
+                    formatter: (value, ctx) => {
+                        const label = ctx.chart.data.labels[ctx.dataIndex];
+                        return window.innerWidth < 640 ? 
+                            value + '%' : 
+                            `${label}\n${value}%`;
+                    },
                     anchor: 'end',
                     align: 'end',
                     offset: 8,
@@ -201,13 +217,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Función para crear degradados únicos para cada dataset
-    function createGradient(ctx, color) {
+    // Función para crear degradados más atractivos
+    function createGradient(ctx, colorStart, colorEnd) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, color);
-        gradient.addColorStop(1, color.replace('0.8', '0.6'));
+        gradient.addColorStop(0, colorStart);
+        gradient.addColorStop(1, colorEnd);
         return gradient;
     }
+
+    // Colores consistentes para todos los gráficos
+    const colors = {
+        blue: {
+            start: 'rgba(96, 165, 250, 0.9)',
+            end: 'rgba(96, 165, 250, 0.6)'
+        },
+        green: {
+            start: 'rgba(52, 211, 153, 0.9)',
+            end: 'rgba(52, 211, 153, 0.6)'
+        },
+        yellow: {
+            start: 'rgba(251, 191, 36, 0.9)',
+            end: 'rgba(251, 191, 36, 0.6)'
+        }
+    };
 
     // Residential Projects Chart
     const projectsCtx = document.getElementById('residentialProjectsChart').getContext('2d');
@@ -219,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'N° Proyectos 2023',
                     data: projects2023,
-                    backgroundColor: createGradient(projectsCtx, 'rgba(96, 165, 250, 0.8)'),
+                    backgroundColor: createGradient(projectsCtx, colors.blue.start, colors.blue.end),
                     datalabels: {
                         align: 'end',
                         anchor: 'end'
@@ -228,20 +260,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'N° Proyectos 2024',
                     data: projects2024,
-                    backgroundColor: createGradient(projectsCtx, 'rgba(52, 211, 153, 0.8)'),
+                    backgroundColor: createGradient(projectsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
                     label: '% Variación',
                     data: projectsVariation,
                     type: 'line',
-                    borderColor: 'rgba(251, 191, 36, 0.8)',
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                    borderColor: colors.yellow.start,
+                    backgroundColor: colors.yellow.end,
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(251, 191, 36, 1)',
+                    pointBackgroundColor: colors.yellow.start,
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
@@ -281,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Unidades 2023',
                     data: units2023,
-                    backgroundColor: createGradient(unitsCtx, 'rgba(96, 165, 250, 0.8)'),
+                    backgroundColor: createGradient(unitsCtx, colors.blue.start, colors.blue.end),
                     datalabels: {
                         align: 'end',
                         anchor: 'end'
@@ -290,20 +322,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Unidades 2024',
                     data: units2024,
-                    backgroundColor: createGradient(unitsCtx, 'rgba(52, 211, 153, 0.8)'),
+                    backgroundColor: createGradient(unitsCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
                     label: '% Variación',
                     data: unitsVariation,
                     type: 'line',
-                    borderColor: 'rgba(251, 191, 36, 0.8)',
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                    borderColor: colors.yellow.start,
+                    backgroundColor: colors.yellow.end,
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(251, 191, 36, 1)',
+                    pointBackgroundColor: colors.yellow.start,
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
@@ -343,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Absorción 2023',
                     data: absorption2023,
-                    backgroundColor: createGradient(absorptionCtx, 'rgba(96, 165, 250, 0.8)'),
+                    backgroundColor: createGradient(absorptionCtx, colors.blue.start, colors.blue.end),
                     datalabels: {
                         align: 'end',
                         anchor: 'end'
@@ -352,20 +384,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: 'Absorción 2024',
                     data: absorption2024,
-                    backgroundColor: createGradient(absorptionCtx, 'rgba(52, 211, 153, 0.8)'),
+                    backgroundColor: createGradient(absorptionCtx, colors.green.start, colors.green.end),
                     datalabels: {
-                        align: 'end',
-                        anchor: 'end'
+                        align: 'start',
+                        anchor: 'start'
                     }
                 },
                 {
                     label: '% Variación',
                     data: absorptionVariation,
                     type: 'line',
-                    borderColor: 'rgba(251, 191, 36, 0.8)',
-                    backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                    borderColor: colors.yellow.start,
+                    backgroundColor: colors.yellow.end,
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(251, 191, 36, 1)',
+                    pointBackgroundColor: colors.yellow.start,
                     pointRadius: 4,
                     yAxisID: 'percentage',
                     datalabels: {
@@ -404,11 +436,11 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: projectsDistribution,
                 backgroundColor: [
-                    'rgba(96, 165, 250, 0.8)',
-                    'rgba(52, 211, 153, 0.8)',
-                    'rgba(251, 191, 36, 0.8)',
-                    'rgba(248, 113, 113, 0.8)',
-                    'rgba(167, 139, 250, 0.8)'
+                    colors.blue.start,
+                    colors.green.start,
+                    colors.yellow.start,
+                    'rgba(248, 113, 113, 0.9)',
+                    'rgba(167, 139, 250, 0.9)'
                 ]
             }]
         },
@@ -441,12 +473,12 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: unitsDistribution,
                 backgroundColor: [
-                    'rgba(96, 165, 250, 0.8)',
-                    'rgba(52, 211, 153, 0.8)',
-                    'rgba(251, 191, 36, 0.8)',
-                    'rgba(248, 113, 113, 0.8)',
-                    'rgba(167, 139, 250, 0.8)',
-                    'rgba(75, 85, 99, 0.8)'
+                    colors.blue.start,
+                    colors.green.start,
+                    colors.yellow.start,
+                    'rgba(248, 113, 113, 0.9)',
+                    'rgba(167, 139, 250, 0.9)',
+                    'rgba(75, 85, 99, 0.9)'
                 ]
             }]
         },
@@ -470,48 +502,76 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Adjust chart sizes
+    // Mejorada función de redimensionamiento
     function resizeCharts() {
         const width = window.innerWidth;
+        const height = window.innerHeight;
+        const isLandscape = width > height;
+
         Chart.instances.forEach(chart => {
-            // Ajustar posición de leyendas
+            // Ajustar posición de leyendas basado en orientación
             if (chart.config.type === 'pie') {
-                chart.options.plugins.legend.position = width < 640 ? 'bottom' : width < 768 ? 'bottom' : 'right';
+                chart.options.plugins.legend.position = width < 640 ? 'bottom' : 
+                                                      width < 768 ? 'bottom' : 
+                                                      isLandscape ? 'right' : 'bottom';
+            } else {
+                chart.options.plugins.legend.position = width < 640 ? 'bottom' : 'top';
             }
             
             // Ajustar tamaños de fuente
-            chart.options.plugins.legend.labels.font.size = width < 640 ? 9 : width < 768 ? 10 : 12;
-            chart.options.plugins.datalabels.font.size = width < 640 ? 8 : width < 768 ? 9 : 11;
+            const fontSize = width < 640 ? {
+                legend: 9,
+                datalabels: 8,
+                ticks: 7
+            } : width < 768 ? {
+                legend: 10,
+                datalabels: 9,
+                ticks: 8
+            } : {
+                legend: 12,
+                datalabels: 11,
+                ticks: 12
+            };
+
+            chart.options.plugins.legend.labels.font.size = fontSize.legend;
+            chart.options.plugins.datalabels.font.size = fontSize.datalabels;
             
             if (chart.options.scales) {
-                chart.options.scales.x.ticks.font.size = width < 640 ? 7 : width < 768 ? 8 : 12;
-                chart.options.scales.y.ticks.font.size = width < 640 ? 8 : width < 768 ? 10 : 12;
+                chart.options.scales.x.ticks.font.size = fontSize.ticks;
+                chart.options.scales.y.ticks.font.size = fontSize.ticks;
             }
             
             // Ajustar espaciado
-            if (width < 640) {
-                chart.options.layout.padding = {
-                    top: 20,
-                    right: 20,
-                    bottom: 10,
-                    left: 10
-                };
-            } else {
-                chart.options.layout.padding = {
-                    top: 30,
-                    right: 30,
-                    bottom: 10,
-                    left: 10
+            chart.options.layout.padding = width < 640 ? {
+                top: 20,
+                right: 20,
+                bottom: 10,
+                left: 10
+            } : {
+                top: 40,
+                right: 35,
+                bottom: 10,
+                left: 15
+            };
+            
+            // Ajustar formato de etiquetas para gráficos de pie
+            if (chart.config.type === 'pie') {
+                chart.options.plugins.datalabels.formatter = (value, ctx) => {
+                    const label = ctx.chart.data.labels[ctx.dataIndex];
+                    return width < 640 ? 
+                        value + '%' : 
+                        `${label}\n${value}%`;
                 };
             }
             
-            chart.update();
+            chart.update('none'); // Actualizar sin animación para mejor rendimiento
         });
     }
 
     // Call resize after the page has fully loaded and on window resize
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', debounce(resizeCharts, 250));
+    window.addEventListener('orientationchange', () => setTimeout(resizeCharts, 250));
 });
 
 // Utility function for debouncing resize events
