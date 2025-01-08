@@ -46,18 +46,26 @@
         }
         .chart-container {
             position: relative;
-            height: 60vh;
-            min-height: 300px;
-            max-height: 500px;
             width: 100%;
+            padding-top: 75%; /* Aspect ratio 4:3 */
             margin-bottom: 2rem;
+        }
+        .chart-container > canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                padding-top: 56.25%; /* Aspect ratio 16:9 for larger screens */
+            }
         }
         @media (max-width: 768px) {
             .chart-container {
-                height: auto;
-                aspect-ratio: 4/3;
-                min-height: 250px;
-                max-height: 400px;
+                padding-top: 75%;
             }
         }
         @media (max-width: 480px) {
@@ -191,7 +199,7 @@
             <!-- Charts -->
             <section class="space-y-4 sm:space-y-8">
                 <!-- Residential Projects Chart -->
-                <div class="chart-card page-break min-h-screen flex flex-col">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Número Proyectos Residenciales (Casas –Depts) Periodo Comparativo 2023 –2024</h3>
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -207,13 +215,13 @@
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
                     </div>
-                    <div class="chart-container flex-grow">
+                    <div class="chart-container">
                         <canvas id="residentialProjectsChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Available Units Chart -->
-                <div class="chart-card page-break min-h-screen flex flex-col">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Unidades Disponibles (Casas –Depts) 11 Principales Ciudades</h3>
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -229,13 +237,13 @@
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
                     </div>
-                    <div class="chart-container flex-grow">
+                    <div class="chart-container">
                         <canvas id="availableUnitsChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Absorption Chart -->
-                <div class="chart-card page-break min-h-screen flex flex-col">
+                <div class="chart-card page-break">
                     <h3 class="text-base sm:text-xl font-bold mb-3 sm:mb-4">Absorción Promedio Mes Proyectos Residenciales</h3>
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -251,7 +259,7 @@
                             <p class="text-sm sm:text-xl font-bold">2,43%</p>
                         </div>
                     </div>
-                    <div class="chart-container flex-grow">
+                    <div class="chart-container">
                         <canvas id="absorptionChart"></canvas>
                     </div>
                 </div>
