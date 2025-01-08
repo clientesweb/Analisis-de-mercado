@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectsDistribution = [60, 10, 8, 6, 16];
     const unitsDistribution = [42, 36, 5, 4, 4, 9];
 
+    Chart.register(ChartDataLabels);
+
+    // Configuración global para datalabels
+    Chart.defaults.set('plugins.datalabels', {
+        display: function(context) {
+            return context.dataset.type === 'line';
+        }
+    });
+
     // Chart configuration
     const config = {
         type: 'bar',
@@ -41,6 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 tooltip: {
                     mode: 'index',
                     intersect: false
+                },
+                datalabels: {
+                    color: 'white'
                 }
             },
             hover: {
@@ -75,7 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: projectsVariation,
                     backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
-                    yAxisID: 'percentage'
+                    yAxisID: 'percentage',
+                    datalabels: {
+                        formatter: (value) => value.toFixed(2) + '%',
+                        color: 'white',
+                        anchor: 'end',
+                        align: 'top'
+                    }
                 }
             ]
         },
@@ -112,7 +130,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: unitsVariation,
                     backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
-                    yAxisID: 'percentage'
+                    yAxisID: 'percentage',
+                    datalabels: {
+                        formatter: (value) => value.toFixed(2) + '%',
+                        color: 'white',
+                        anchor: 'end',
+                        align: 'top'
+                    }
                 }
             ]
         },
@@ -149,7 +173,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: absorptionVariation,
                     backgroundColor: 'rgba(251, 191, 36, 0.8)',
                     type: 'line',
-                    yAxisID: 'percentage'
+                    yAxisID: 'percentage',
+                    datalabels: {
+                        formatter: (value) => value.toFixed(2) + '%',
+                        color: 'white',
+                        anchor: 'end',
+                        align: 'top'
+                    }
                 }
             ]
         },
@@ -254,39 +284,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => setTimeout(resizeCharts, 500));
     window.addEventListener('resize', resizeCharts);
 
-    // Función para imprimir el informe
-    function printReport() {
-        const button = document.getElementById('printButton');
-        const buttonText = button.querySelector('span');
-        
-        button.disabled = true;
-        buttonText.textContent = 'Preparando para imprimir...';
-
-        // Ocultar el botón de impresión
-        button.style.display = 'none';
-
-        // Asegurar que los gráficos estén completamente renderizados
-        Promise.all(Chart.instances.map(chart => chart.render())).then(() => {
-            // Imprimir después de un breve retraso para asegurar que los estilos se apliquen
-            setTimeout(() => {
-                window.print();
-                
-                // Restaurar el botón después de imprimir
-                button.style.display = '';
-                button.disabled = false;
-                buttonText.textContent = 'Imprimir Informe';
-            }, 1000);
-        });
-    }
-
-    // Agregar evento de clic al botón de impresión
-    const printButton = document.getElementById('printButton');
-    if (printButton) {
-        printButton.addEventListener('click', printReport);
-        console.log('Evento de clic añadido al botón de impresión');
-    } else {
-        console.error('No se encontró el botón de impresión');
-    }
 });
 
 // Verificar que el script se ha cargado correctamente
