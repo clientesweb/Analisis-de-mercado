@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Inmobiliario Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @media print {
+            @page {
+                size: 1080px 1920px;
+                margin: 0;
+            }
+            body {
+                width: 1080px;
+                height: 1920px;
+            }
+            .print-bg {
+                background: linear-gradient(to bottom, #dc2626 0%, #991b1b 50%, #000000 100%) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="print-bg bg-gradient-to-b from-red-600 via-red-800 to-black min-h-screen text-white">
+    <div class="container mx-auto p-8 relative">
+        <!-- Print Button -->
+        <button onclick="window.print()" class="no-print fixed top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-lg flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
+            </svg>
+            Imprimir / PDF
+        </button>
+
+        <!-- Logo -->
+        <div class="w-full flex justify-center mb-8">
+            <div class="bg-white/10 backdrop-blur-xl p-6 rounded-2xl shadow-2xl">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Diseño%20sin%20título%20(2)-lg6MRJ2vzhdrcgIQujzC1HWjx25lKX.png" alt="Bienes Raices Janneth Aguirre" class="w-60 h-auto object-contain">
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center space-y-4 mb-12">
+            <h1 class="text-4xl font-bold tracking-tight">COMPORTAMIENTO OFERTA RESIDENCIAL ORGANIZADA</h1>
+            <h2 class="text-3xl font-semibold text-white/90">11 PRINCIPALES CIUDADES DEL ECUADOR</h2>
+            <h3 class="text-2xl text-white/80">PERIODO COMPARATIVO 2023 - 2024</h3>
+        </div>
+
+        <!-- Objective -->
+        <div class="space-y-4 mb-12 backdrop-blur-xl bg-white/5 p-6 rounded-2xl border border-white/10">
+            <h2 class="text-2xl font-bold">OBJETIVO DEL ARTÍCULO</h2>
+            <p class="text-lg leading-relaxed text-white/90">
+                Medir el nivel comercial y constructivo de la oferta residencial (casas –departamentos) últimos dos años factor determinante que permite conocer la salud inmobiliaria de cada una de las ciudades analizadas esto resultado de los niveles de absorción promedio.
+            </p>
+            <p class="text-lg leading-relaxed text-white/90">
+                Información actualizada puntualmente por ciudad y proyecto en el último semestre de cada año la cual en la actualidad es una herramienta básica e indispensable para el sector de la construcción, financiero y comercial del país.
+            </p>
+        </div>
+
+        <!-- Charts -->
+        <div class="space-y-8">
+            <!-- Residential Projects Chart -->
+            <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">Número Proyectos Residenciales (Casas –Depts) Periodo Comparativo 2023 –2024</h3>
+                <canvas id="residentialProjectsChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Available Units Chart -->
+            <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">Unidades Disponibles (Casas –Depts) 11 Principales Ciudades</h3>
+                <canvas id="availableUnitsChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Absorption Chart -->
+            <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">Absorción Promedio Mes Proyectos Residenciales</h3>
+                <canvas id="absorptionChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Distribution Charts -->
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-6 w-full md:w-1/2">
+                    <h3 class="text-xl font-bold mb-4">Peso Porcentual Oferta por Ciudad</h3>
+                    <canvas id="projectsDistributionChart" width="200" height="200"></canvas>
+                </div>
+                <div class="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-lg p-6 w-full md:w-1/2">
+                    <h3 class="text-xl font-bold mb-4">Peso Porcentual Unidades Disponibles</h3>
+                    <canvas id="unitsDistributionChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
