@@ -236,11 +236,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function generatePDF() {
     const element = document.body;
     const opt = {
-        margin:       10,
-        filename:     'informe_inmobiliario_ecuador.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin: 10,
+        filename: 'informe_inmobiliario_ecuador.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true,
+            logging: true,
+            letterRendering: true
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     // New Promise-based usage:
@@ -253,4 +258,26 @@ window.addEventListener('resize', function() {
         chart.resize();
     });
 });
+
+// Function to ensure charts are fully rendered before PDF generation
+function ensureChartsRendered() {
+    return new Promise((resolve) => {
+        const checkCharts = setInterval(() => {
+            const allChartsReady = Chart.instances.every(chart => chart.chartArea);
+            if (allChartsReady) {
+                clearInterval(checkCharts);
+                resolve();
+            }
+        }, 100);
+    });
+}
+
+// Update PDF generation to wait for charts
+async function generatePDFWithCharts() {
+    await ensureChartsRendered();
+    generatePDF();
+}
+
+// Update button click handler
+document.querySelector('button').onclick = generatePDFWithCharts;
 
