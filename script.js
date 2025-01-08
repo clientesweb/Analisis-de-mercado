@@ -23,31 +23,47 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { ticks: { color: 'white', maxRotation: 45, minRotation: 45 } },
-                y: { ticks: { color: 'white' } }
+                x: { 
+                    ticks: { 
+                        color: 'white',
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                },
+                y: { 
+                    ticks: { color: 'white' }
+                }
             },
             plugins: {
-                legend: { labels: { color: 'white' } },
-                tooltip: { mode: 'index', intersect: false }
+                legend: { 
+                    labels: { color: 'white' }
+                },
+                tooltip: { 
+                    mode: 'index',
+                    intersect: false
+                }
             },
-            animation: { duration: 1000, easing: 'easeOutQuart' }
+            animation: { 
+                duration: 1000,
+                easing: 'easeOutQuart'
+            }
         }
     };
 
     // Create charts
-    createChart('residentialProjectsChart', cities, [
+    createBarChart('residentialProjectsChart', cities, [
         { label: 'N° Proyectos 2023', data: projects2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
         { label: 'N° Proyectos 2024', data: projects2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
         { label: '% Variación', data: projectsVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
     ]);
 
-    createChart('availableUnitsChart', cities, [
+    createBarChart('availableUnitsChart', cities, [
         { label: 'Unidades 2023', data: units2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
         { label: 'Unidades 2024', data: units2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
         { label: '% Variación', data: unitsVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
     ]);
 
-    createChart('absorptionChart', cities, [
+    createBarChart('absorptionChart', cities, [
         { label: 'Absorción 2023', data: absorption2023, backgroundColor: 'rgba(96, 165, 250, 0.8)' },
         { label: 'Absorción 2024', data: absorption2024, backgroundColor: 'rgba(52, 211, 153, 0.8)' },
         { label: '% Variación', data: absorptionVariation, backgroundColor: 'rgba(251, 191, 36, 0.8)', type: 'line', yAxisID: 'percentage' }
@@ -62,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 
-function createChart(id, labels, datasets) {
+function createBarChart(id, labels, datasets) {
     new Chart(document.getElementById(id), {
         type: 'bar',
         data: { labels, datasets },
@@ -70,7 +86,10 @@ function createChart(id, labels, datasets) {
             ...config.options,
             scales: {
                 ...config.options.scales,
-                percentage: { position: 'right', ticks: { color: 'white' } }
+                percentage: { 
+                    position: 'right', 
+                    ticks: { color: 'white' }
+                }
             }
         }
     });
@@ -90,7 +109,9 @@ function createPieChart(id, labels, data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { labels: { color: 'white' } },
+                legend: { 
+                    labels: { color: 'white' }
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -99,7 +120,10 @@ function createPieChart(id, labels, data) {
                     }
                 }
             },
-            animation: { animateRotate: true, animateScale: true }
+            animation: { 
+                animateRotate: true, 
+                animateScale: true 
+            }
         }
     });
 }
@@ -111,6 +135,9 @@ async function generatePDFWithCharts() {
     try {
         button.disabled = true;
         buttonText.textContent = 'Generando PDF...';
+        
+        // Ensure all charts are fully rendered
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         const element = document.body;
         const canvas = await html2canvas(element, {
@@ -124,11 +151,17 @@ async function generatePDFWithCharts() {
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = 30;
+
+        pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+        
         pdf.save('informe_inmobiliario_ecuador.pdf');
         
         buttonText.textContent = 'PDF Generado';
