@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 8 : 12
                         },
                         maxRotation: 45,
                         minRotation: 45
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 8 : 12
                         },
                         callback: function(value) {
                             return value.toLocaleString();
@@ -86,16 +86,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: { 
                         color: 'white',
                         font: {
-                            size: 14
+                            size: () => window.innerWidth < 640 ? 10 : 14
                         },
-                        padding: 20
+                        padding: () => window.innerWidth < 640 ? 10 : 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: 12
+                        size: () => window.innerWidth < 640 ? 8 : 12
                     },
                     formatter: (value, context) => {
                         if (context.datasetIndex === 2) {
@@ -105,7 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     anchor: 'end',
                     align: 'top',
-                    offset: 5
+                    offset: 5,
+                    display: (context) => {
+                        return window.innerWidth >= 640 || context.datasetIndex !== 2;
+                    }
                 }
             },
             barPercentage: 0.8,
@@ -152,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -205,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -258,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 8 : 12
                         },
                         callback: function(value) {
                             return value + '%';
@@ -280,23 +283,26 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right',
+                    position: () => window.innerWidth < 640 ? 'bottom' : 'right',
                     labels: { 
                         color: 'white',
                         font: {
-                            size: 12
+                            size: () => window.innerWidth < 640 ? 10 : 12
                         },
-                        padding: 20
+                        padding: () => window.innerWidth < 640 ? 10 : 20
                     }
                 },
                 datalabels: {
                     color: 'white',
                     font: {
                         weight: 'bold',
-                        size: 12
+                        size: () => window.innerWidth < 640 ? 8 : 12
                     },
                     formatter: (value) => {
                         return value + '%';
+                    },
+                    display: (context) => {
+                        return window.innerWidth >= 640;
                     }
                 }
             }
@@ -332,7 +338,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función de redimensionamiento
     function resizeCharts() {
         Chart.instances.forEach(chart => {
-            chart.resize();
+            chart.options.plugins.legend.position = window.innerWidth < 640 ? 'bottom' : 'top';
+            chart.options.plugins.datalabels.display = (context) => {
+                return window.innerWidth >= 640 || context.datasetIndex !== 2;
+            };
+            chart.update();
         });
     }
 
